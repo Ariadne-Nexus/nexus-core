@@ -37,7 +37,23 @@ export default function HomePage() {
             </article>
           </div>
         </section>
+
+        {/* DEMO PREVIEW */}
+        <section>
+          <h2 className="text-2xl font-semibold mb-4">Live Demo</h2>
+          {/* DemoPreview is a client component that fetches /api/demo */}
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+          <div>
+            {/* Import dynamically to keep page a server component */}
+            {/* @ts-ignore */}
+            <DemoPreviewClient />
+          </div>
+        </section>
       </div>
     </main>
   );
 }
+
+// Dynamic import of client component
+import dynamic from "next/dynamic";
+const DemoPreviewClient = dynamic(() => import("./components/DemoPreview"), { ssr: false });
