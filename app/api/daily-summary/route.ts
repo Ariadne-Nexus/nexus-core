@@ -1,18 +1,19 @@
+// app/api/daily-summary/route.ts
 import { NextResponse } from "next/server";
+import fs from "fs/promises";
+import path from "path";
 
 export async function GET() {
-  return NextResponse.json({
-    date: "2025-11-25",
-    repo: "dotlink-ops/nextjs",
-    summary_bullets: [
-      "Got daily automation pipeline running end-to-end.",
-      "Integrated OpenAI, GitHub, and local artifacts."
-    ],
-    action_items: [
-      "Polish Next.js portfolio landing page.",
-      "Refine investor-facing automation summary."
-    ],
-    raw_text: "Summary:\\n- ...\\n\\nActions:\\n- ...",
-    created_at: "2025-11-25T11:55:23"
-  });
+  try {
+    const filePath = path.join(process.cwd(), "data", "daily_summary.json");
+    const file = await fs.readFile(filePath, "utf8");
+    const json = JSON.parse(file);
+    return NextResponse.json(json);
+  } catch (err) {
+    console.error("Error reading daily_summary.json:", err);
+    return NextResponse.json(
+      { error: "Failed to load daily summary" },
+      { status: 500 }
+    );
+  }
 }
