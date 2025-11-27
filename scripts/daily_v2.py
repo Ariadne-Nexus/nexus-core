@@ -376,10 +376,14 @@ def main() -> int:
     
     parser = argparse.ArgumentParser(description="Daily Automation Runner")
     parser.add_argument("--demo", action="store_true", help="Run in demo mode (no API calls)")
+    parser.add_argument("--dry-run", action="store_true", help="Alias for --demo (no API calls)")
     args = parser.parse_args()
     
+    # Support both --demo and --dry-run flags
+    demo_mode = args.demo or args.dry_run
+    
     try:
-        automation = DailyAutomation(demo_mode=args.demo)
+        automation = DailyAutomation(demo_mode=demo_mode)
         return automation.run()
     except ValueError as e:
         # Configuration errors are already logged by _initialize_clients
