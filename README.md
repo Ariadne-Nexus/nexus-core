@@ -175,6 +175,35 @@ open http://localhost:3000/api/daily-summary
 
 ---
 
+## 🎮 Command Reference
+
+### Next.js Commands
+
+| Command | Purpose | When to Use |
+|---------|---------|-------------|
+| `npm run dev` | Start development server | Local development (http://localhost:3000) |
+| `npm run build` | Production build + type check | Before deployment, verify no errors |
+| `npm start` | Run production build locally | Test production bundle locally |
+| `npm run lint` | Run ESLint | Check code quality |
+
+### Python Automation Commands
+
+| Command | Purpose | When to Use |
+|---------|---------|-------------|
+| `python3 scripts/daily_v2.py --demo` | Run with demo data | Testing without API keys |
+| `python3 scripts/daily_v2.py` | Run in production mode | Real automation with API keys |
+| `./run-daily.sh` | Automated run + sync | Convenience wrapper for production |
+| `./setup.sh` | One-command setup | Initial setup or reset environment |
+| `bash scripts/validate.sh` | Run all tests | Comprehensive validation |
+
+### Live Deployment
+
+- **Production:** https://avidelta.vercel.app
+- **Auto-deploy:** Push to `main` branch triggers Vercel deployment
+- **Status:** Built with Next.js 16.0.0, deployed via Vercel
+
+---
+
 ## 🏗️ Architecture
 
 ### Directory Structure
