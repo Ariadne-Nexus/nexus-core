@@ -1,4 +1,4 @@
-import { DailySummaryPanel } from "./components/DailySummaryPanel";
+import { DailySummaryPanel } from "@/components/DailySummaryPanel";
 
 export default function HomePage() {
   return (
