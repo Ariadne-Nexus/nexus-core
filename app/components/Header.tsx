@@ -10,7 +10,7 @@ export function Header() {
     <header className="sticky top-0 z-10 border-b border-slate-100/80 bg-white/85 backdrop-blur dark:border-slate-800/80 dark:bg-black/70">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <div className="flex items-center gap-3">
-          <span className="h-10 w-10 rounded-2xl bg-gradient-to-br from-indigo-500 to-sky-500" aria-hidden />
+          <span className="h-10 w-10 rounded-2xl bg-gradient-to-br from-indigo-500 to-sky-500" aria-hidden="true" />
           <div>
             <p className="text-base font-semibold text-slate-900 dark:text-white">CustomerOS</p>
             <p className="text-xs text-slate-500 dark:text-slate-400">Relationship workspace</p>
