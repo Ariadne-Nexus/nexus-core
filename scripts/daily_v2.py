@@ -16,8 +16,8 @@ Environment Variables Required:
 - REPO_NAME: Target repository in format "owner/repo"
 
 Optional:
-- NOTES_SOURCE: Path to notes directory (default: ./data/notes)
-- OUTPUT_DIR: Output directory for generated files (default: ./data)
+- NOTES_SOURCE: Path to notes directory (default: ./output/notes)
+- OUTPUT_DIR: Output directory for generated files (default: ./output)
 """
 
 import os
@@ -55,8 +55,8 @@ class DailyAutomation:
     def __init__(self, demo_mode: bool = False):
         self.demo_mode = demo_mode or not HAS_DEPS
         self.project_root = Path(__file__).parent.parent
-        self.output_dir = Path(os.getenv("OUTPUT_DIR", self.project_root / "data"))
-        self.notes_source = Path(os.getenv("NOTES_SOURCE", self.project_root / "data" / "notes"))
+        self.output_dir = Path(os.getenv("OUTPUT_DIR", self.project_root / "output"))
+        self.notes_source = Path(os.getenv("NOTES_SOURCE", self.project_root / "output" / "notes"))
         
         # Ensure directories exist
         self.output_dir.mkdir(parents=True, exist_ok=True)

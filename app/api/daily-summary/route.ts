@@ -30,7 +30,7 @@ interface DailySummary {
 
 export async function GET() {
   try {
-    const filePath = path.join(process.cwd(), "data", "daily_summary.json");
+    const filePath = path.join(process.cwd(), "output", "daily_summary.json");
     
     // Check if file exists
     try {

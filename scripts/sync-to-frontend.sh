@@ -11,9 +11,9 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 echo "🔄 Syncing automation outputs to Next.js..."
 
 # Source and destination paths
-DATA_SOURCE="$PROJECT_ROOT/data/daily_summary.json"
-DATA_DEST="$PROJECT_ROOT/data/daily_summary.json"
-AUDIT_SOURCE_DIR="$PROJECT_ROOT/data"
+DATA_SOURCE="$PROJECT_ROOT/output/daily_summary.json"
+DATA_DEST="$PROJECT_ROOT/output/daily_summary.json"
+AUDIT_SOURCE_DIR="$PROJECT_ROOT/output"
 SAMPLE_OUTPUT_DIR="$PROJECT_ROOT/SAMPLE_OUTPUTS"
 
 # Check if source file exists
@@ -80,7 +80,7 @@ EOF
 fi
 
 # Create a backup
-BACKUP_DIR="$PROJECT_ROOT/data/backups"
+BACKUP_DIR="$PROJECT_ROOT/output/backups"
 mkdir -p "$BACKUP_DIR"
 BACKUP_FILE="$BACKUP_DIR/daily_summary_$(date +%Y%m%d_%H%M%S).json"
 cp "$DATA_SOURCE" "$BACKUP_FILE"

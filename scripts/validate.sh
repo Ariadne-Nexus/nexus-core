@@ -135,11 +135,11 @@ else
     test_fail "daily_v2.py failed to run"
 fi
 
-if [ -f "$PROJECT_ROOT/data/daily_summary.json" ]; then
+if [ -f "$PROJECT_ROOT/output/daily_summary.json" ]; then
     test_pass "daily_summary.json generated"
     
     # Validate JSON
-    if python3 -c "import json; json.load(open('$PROJECT_ROOT/data/daily_summary.json'))" 2>/dev/null; then
+    if python3 -c "import json; json.load(open('$PROJECT_ROOT/output/daily_summary.json'))" 2>/dev/null; then
         test_pass "  └─ Valid JSON format"
     else
         test_fail "  └─ Invalid JSON format"
