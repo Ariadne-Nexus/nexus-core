@@ -1,4 +1,21 @@
+"use client";
+
+import { FormEvent } from "react";
+
 export function CTA() {
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const data = {
+      email: formData.get("email"),
+      teamSize: formData.get("team-size"),
+      context: formData.get("context"),
+    };
+    // TODO: Replace with actual API call
+    console.log("Demo request submitted:", data);
+    alert("Thanks! We'll be in touch within one business day.");
+  }
+
   return (
     <section
       id="cta"
@@ -13,7 +30,7 @@ export function CTA() {
             Share a few details and our team will tailor a workspace to your onboarding, renewal, or expansion workflows.
           </p>
         </div>
-        <div className="flex flex-col gap-4 rounded-2xl bg-white/10 p-6 shadow-xl backdrop-blur">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 rounded-2xl bg-white/10 p-6 shadow-xl backdrop-blur">
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="flex flex-col text-sm font-semibold text-white">
               Work email
@@ -22,6 +39,7 @@ export function CTA() {
                 type="email"
                 name="email"
                 placeholder="alex@company.com"
+                required
               />
             </label>
             <label className="flex flex-col text-sm font-semibold text-white">
@@ -47,12 +65,15 @@ export function CTA() {
             />
           </label>
           <div className="flex flex-wrap items-center gap-3">
-            <button className="inline-flex items-center justify-center rounded-full bg-white px-5 py-2 text-sm font-semibold text-indigo-700 transition hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
+            <button
+              type="submit"
+              className="inline-flex items-center justify-center rounded-full bg-white px-5 py-2 text-sm font-semibold text-indigo-700 transition hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            >
               Request my demo
             </button>
             <p className="text-xs text-white/80">We respond in under one business day.</p>
           </div>
-        </div>
+        </form>
       </div>
     </section>
   );
