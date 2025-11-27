@@ -1,0 +1,98 @@
+name: Daily Runner
+
+on:
+  schedule:
+    # 5:00 AM Pacific = 13:00 UTC (adjust as needed)
+    - cron: "0 13 * * *"
+  workflow_dispatch:
+
+jobs:
+  run-daily:
+    runs-on: ubuntu-latest
+
+    env:
+      PYTHONUNBUFFERED: "1"
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          else
+            echo "No requirements.txt found, skipping."
+          fi
+
+      - name: Run daily_v2
+        id: run_daily
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          # Add other secrets/env vars as needed
+        run: |
+          echo "Running daily_v2.py..."
+          python daily/daily_v2.py
+        # if this step fails, subsequent steps can check its conclusion
+
+      - name: Upload outputs as artifacts
+        if: always()  # we want logs even if the script fails
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-output-${{ github.run_number }}
+          path: |
+            outputs/
+          if-no-files-found: warn
+
+      - name: Commit summary files (optional)
+        if: success()  # only on full success
+        run: |
+          echo "Committing daily summary files..."
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add outputs/daily_summary.txt outputs/daily_summary.json || echo "Nothing to add"
+          git commit -m "Daily summary run ${{ github.run_number }} [skip ci]" || echo "No changes to commit"
+          git push || echo "No changes pushed"
+
+      # ---------- Notion/Webhook placeholder ----------
+      - name: Call Notion webhook (placeholder)
+        if: success()  # only on success; change to 'always()' if you want error reports
+        run: |
+          echo "Stub: call Notion or other webhook here."
+          # Example curl (commented out until ready):
+          # curl -X POST "$NOTION_WEBHOOK_URL" \
+          #   -H "Authorization: Bearer $NOTION_API_TOKEN" \
+          #   -H "Content-Type: application/json" \
+          #   -d @outputs/daily_summary.json
+        env:
+          NOTION_WEBHOOK_URL: ${{ secrets.NOTION_WEBHOOK_URL }}
+          NOTION_API_TOKEN: ${{ secrets.NOTION_API_TOKEN }}
+
+      # ---------- Email on failure (optional) ----------
+      - name: Send failure email notification
+        if: failure()  # only run if something above failed
+        uses: dawidd6/action-send-mail@v4
+        with:
+          server_address: ${{ secrets.SMTP_SERVER }}
+          server_port: ${{ secrets.SMTP_PORT }}
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: "[Daily Runner] Failure on ${{ github.workflow }} (run #${{ github.run_number }})"
+          # from needs to be allowed by your SMTP provider
+          from: ${{ secrets.EMAIL_FROM }}
+          to: ${{ secrets.EMAIL_TO }}
+          secure: true
+          body: |
+            The daily runner workflow failed.
+
+            Repository: ${{ github.repository }}
+            Run number: ${{ github.run_number }}
+            Run URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+            Please check the logs and outputs/daily_v2.log artifact.
