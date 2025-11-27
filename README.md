@@ -16,30 +16,22 @@ A full-stack automation system that ingests daily notes, generates AI summaries,
 
 ## 💼 What This Project Demonstrates
 
-This repository showcases **three core capabilities** that matter to clients and hiring teams:
+This repo shows how I design and ship **automation-first workflows**:
 
-### 1. Production-Ready Python Automation
-- **Daily automation runner** (`scripts/daily_v2.py`) that reliably processes notes into actionable summaries
-- **OpenAI GPT-4 integration** with error handling, fallback logic, and structured JSON output
-- **GitHub API automation** for creating labeled issues from action items
-- **Fail-fast validation** with clear error messages and demo mode for testing without API keys
-- **Comprehensive logging** with timestamps for debugging and audit trails
+- A one-command **daily runner** (Python) that:
+  - Activates a virtual environment
+  - Pulls unstructured notes
+  - Uses the OpenAI API to generate clean daily summaries
+  - Can be extended to open/update GitHub issues
 
-### 2. Modern Next.js Portfolio Frontend
-- **React 19 + Next.js 16** with TypeScript strict mode and App Router
-- **10+ API endpoints** for health checks, status monitoring, and data serving
-- **Responsive dashboard** that fetches and displays automation results
-- **Vercel deployment** with automatic CI/CD from GitHub pushes
-- **SEO-ready** with sitemap, robots.txt, and metadata configuration
+- A **Next.js portfolio frontend** that:
+  - Presents the system as a client- and investor-ready product
+  - Is wired for Vercel deployment (`npm run build` passes)
+  - Can surface automation outputs as a live dashboard
 
-### 3. AI-Friendly Development Workflow
-- **Repo Copilot assistant** (`codex-assistant.mjs`) for AI-powered code exploration
-- **Comprehensive documentation** including architecture diagrams and data flow
-- **One-command setup** (`setup.sh`) for quick onboarding of new collaborators
-- **Clear separation** between Python backend and Next.js frontend with well-defined interfaces
-- **Test-first approach** with validation scripts and CI/CD pipelines
-
-**Why This Matters:** This isn't just a portfolio piece—it's a working system that demonstrates how to build reliable automation tools that teams actually use. Every component is production-ready with proper error handling, logging, and documentation.
+The repo is structured to be **AI-friendly** for Copilot/LLM agents via
+`codex-assistant.mjs`, which tells automated tools how to debug, refactor,
+and extend it safely.
 
 ---
 
@@ -298,40 +290,13 @@ nextjs/
 
 ### Running the Daily Automation
 
-The automation script processes your daily notes and creates GitHub issues automatically.
-
-**Quick Demo (No Setup Required):**
 ```bash
-# Run with realistic demo data (no API keys needed)
-python3 scripts/daily_v2.py --demo
+# one-time setup
+./scripts/setup.sh
 
-# View the generated summary
-cat output/daily_summary.json | jq '.summary_bullets'
-```
-
-**Production Mode (With Your Own Data):**
-```bash
-# 1. Add your notes to the input directory
-echo "Implement user authentication" > output/notes/todo.md
-echo "Fix staging database issue" > output/notes/bugs.txt
-
-# 2. Run the automation (requires API keys in .env.local)
-python3 scripts/daily_v2.py
-
-# 3. Check the results
-cat output/daily_summary.json | jq
-```
-
-**What Happens:**
-- ✅ Script reads all `.md` and `.txt` files from `output/notes/`
-- ✅ OpenAI GPT-4 generates structured summary with highlights and action items
-- ✅ GitHub issues are created automatically with proper labels
-- ✅ Results saved to `output/daily_summary.json` and `output/audit_*.json`
-
-**Convenience Wrapper:**
-```bash
-./run-daily.sh          # Production mode
-./run-daily.sh --demo   # Demo mode
+# activate virtualenv and run
+source .venv/bin/activate
+python daily_v2.py --dry-run
 ```
 
 ---

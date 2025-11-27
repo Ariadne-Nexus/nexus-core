@@ -113,8 +113,6 @@ export default function HomePage() {
               /api/demo/view
             </a>
           </div>
-          {/* DemoPreview is a client component that fetches /api/demo */}
-          {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
           <div>
             {/* Import client component directly; Next handles client boundary */}
             <DemoPreview />

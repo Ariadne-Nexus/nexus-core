@@ -28,6 +28,14 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 
+# Configure logging first (before any other code)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    datefmt="%Y-%m-%dT%H:%M:%S%z",
+)
+logger = logging.getLogger(__name__)
+
 # Third-party imports (with fallback for demo mode)
 try:
     from dotenv import load_dotenv
@@ -36,17 +44,8 @@ try:
     HAS_DEPS = True
 except ImportError:
     HAS_DEPS = False
-    print("⚠️  Warning: Missing dependencies. Install with: pip install -r scripts/requirements.txt")
-    print("   Running in DEMO MODE (no actual API calls)\n")
-
-
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s",
-    datefmt="%Y-%m-%dT%H:%M:%S%z",
-)
-logger = logging.getLogger(__name__)
+    logger.warning("⚠️  Missing dependencies. Install with: pip install -r scripts/requirements.txt")
+    logger.warning("   Running in DEMO MODE (no actual API calls)")
 
 
 class DailyAutomation:
@@ -73,48 +72,50 @@ class DailyAutomation:
         logger.info(f"Initialized DailyAutomation (demo_mode={self.demo_mode})")
 
     def _initialize_clients(self) -> None:
-        """Initialize API clients with environment variables"""
+        """
+        Initialize OpenAI and GitHub clients with fail-fast validation.
+        
+        Raises RuntimeError if required environment variables are missing.
+        """
         # Load environment variables
         load_dotenv(self.project_root / ".env.local")
         
-        # OpenAI
-        openai_key = os.getenv("OPENAI_API_KEY")
-        if not openai_key or openai_key == "your-openai-api-key-here":
-            logger.error("❌ OPENAI_API_KEY not configured")
-            logger.error("   Set OPENAI_API_KEY in .env.local or run with --demo flag")
-            logger.error("   Get your API key from: https://platform.openai.com/api-keys")
-            raise ValueError("OPENAI_API_KEY is required for production mode")
+        # Check for required environment variables
+        missing = []
         
-        try:
-            self.openai_client = OpenAI(api_key=openai_key)
-            logger.info("✓ OpenAI client initialized")
-        except Exception as e:
-            logger.error(f"❌ Failed to initialize OpenAI client: {e}")
-            raise
+        openai_api_key = os.getenv("OPENAI_API_KEY")
+        if not openai_api_key or openai_api_key == "your-openai-api-key-here":
+            missing.append("OPENAI_API_KEY")
         
-        # GitHub
         github_token = os.getenv("GITHUB_TOKEN")
-        repo_name = os.getenv("REPO_NAME")
-        
         if not github_token or github_token == "your-github-token-here":
-            logger.error("❌ GITHUB_TOKEN not configured")
-            logger.error("   Set GITHUB_TOKEN in .env.local or run with --demo flag")
-            logger.error("   Get your token from: https://github.com/settings/tokens")
-            raise ValueError("GITHUB_TOKEN is required for production mode")
+            missing.append("GITHUB_TOKEN")
         
+        repo_name = os.getenv("REPO_NAME")
         if not repo_name or repo_name == "owner/repo":
-            logger.error("❌ REPO_NAME not configured")
-            logger.error("   Set REPO_NAME in .env.local (format: owner/repo)")
-            raise ValueError("REPO_NAME is required for production mode")
+            missing.append("REPO_NAME")
         
+        if missing:
+            msg = (
+                f"Missing required environment variables: {', '.join(missing)}. "
+                "Set them in .env.local or run with --demo flag. "
+                "See README.md for setup instructions."
+            )
+            logger.error(f"❌ {msg}")
+            raise RuntimeError(msg)
+        
+        # Initialize API clients
         try:
+            self.openai_client = OpenAI(api_key=openai_api_key)
             self.github_client = Github(github_token)
             self.repo = self.github_client.get_repo(repo_name)
-            logger.info(f"✓ GitHub client initialized for {repo_name}")
+            logger.info(f"✓ API clients initialized successfully (repo: {repo_name})")
         except GithubException as e:
             logger.error(f"❌ Failed to access repository {repo_name}: {e}")
-            logger.error("   Check that GITHUB_TOKEN has 'repo' scope")
-            logger.error("   Check that REPO_NAME is correct (format: owner/repo)")
+            logger.error("   Check that GITHUB_TOKEN has 'repo' scope and REPO_NAME is correct")
+            raise
+        except Exception as e:
+            logger.error(f"❌ Failed to initialize API clients: {e}")
             raise
 
     def ingest_notes(self) -> List[str]:
@@ -309,12 +310,23 @@ Format as JSON with keys: highlights, action_items, assessment"""
         return output_file
 
     def run(self) -> int:
-        """Execute the full automation workflow"""
+        """
+        Execute the daily automation workflow.
+        
+        Steps:
+        1. Ingest notes from configured source
+        2. Generate summary (OpenAI or demo fallback)
+        3. Create GitHub issues from action items (skipped in demo mode)
+        4. Save outputs to disk
+        
+        Returns:
+            0 on success, 1 on failure
+        """
         start_time = datetime.now(timezone.utc)
         
         try:
             logger.info("=" * 60)
-            logger.info("🚀 Starting Daily Automation Runner v2")
+            logger.info("=== Daily automation run starting ===")
             logger.info("=" * 60)
             
             # Step 1: Ingest notes
@@ -323,12 +335,26 @@ Format as JSON with keys: highlights, action_items, assessment"""
                 logger.warning("No notes found, exiting")
                 return 0
             
+            logger.info(f"Ingested {len(notes)} notes")
+            
             # Step 2: Generate summary
-            summary = self.generate_summary(notes)
+            if self.demo_mode:
+                logger.info("Using demo summary generation (no OpenAI calls)")
+                summary = self._generate_demo_summary(notes)
+            else:
+                summary = self.generate_summary(notes)
             
             # Step 3: Create GitHub issues
             action_items = summary.get("action_items", [])
-            issues = self.create_github_issues(action_items) if action_items else []
+            if self.demo_mode:
+                logger.info(f"Skipping GitHub issue creation (demo_mode={self.demo_mode})")
+                issues = []
+            elif action_items:
+                logger.info("Creating GitHub issues from action items")
+                issues = self.create_github_issues(action_items)
+            else:
+                logger.info("No action items to create issues from")
+                issues = []
             
             # Step 4: Save output
             output_file = self.save_output(notes, summary, issues)
@@ -344,40 +370,56 @@ Format as JSON with keys: highlights, action_items, assessment"""
             logger.info("=" * 60)
             
             if self.demo_mode:
-                logger.info("\n💡 To enable live API calls:")
+                logger.info("")
+                logger.info("💡 To enable live API calls:")
                 logger.info("   1. Install dependencies: pip install -r scripts/requirements.txt")
                 logger.info("   2. Configure .env.local with API keys")
-                logger.info("   3. Run again: python3 scripts/daily_v2.py\n")
+                logger.info("   3. Run again: python3 scripts/daily_v2.py")
+                logger.info("")
             
-            # Final success message
+            # Final success banner
             logger.info("=" * 60)
-            logger.info("✅✅✅ Daily v2 automation run finished successfully ✅✅✅")
+            logger.info("=== Daily automation run finished successfully ===")
             logger.info("=" * 60)
             
             return 0
             
-        except ValueError as e:
-            # Configuration errors (missing API keys, etc.)
-            logger.error("=" * 60)
-            logger.error(f"❌ Configuration Error: {e}")
-            logger.error("=" * 60)
-            return 1
         except Exception as e:
-            # Unexpected errors
             logger.error("=" * 60)
-            logger.error(f"❌ Automation failed: {e}", exc_info=True)
+            logger.error(f"❌ Automation failed: {e}")
             logger.error("=" * 60)
+            logger.exception("Daily automation run failed")
             return 1
 
 
-def main() -> int:
-    """Main entry point"""
+def main(argv: Optional[List[str]] = None) -> int:
+    """
+    Main entry point for the daily automation runner.
+    
+    Args:
+        argv: Command-line arguments (defaults to sys.argv if None)
+        
+    Returns:
+        0 on success, 1 on failure
+    """
     import argparse
     
-    parser = argparse.ArgumentParser(description="Daily Automation Runner")
-    parser.add_argument("--demo", action="store_true", help="Run in demo mode (no API calls)")
-    parser.add_argument("--dry-run", action="store_true", help="Alias for --demo (no API calls)")
-    args = parser.parse_args()
+    parser = argparse.ArgumentParser(
+        description="Run the daily automation workflow.",
+        epilog="Example: python3 scripts/daily_v2.py --demo"
+    )
+    parser.add_argument(
+        "--demo",
+        action="store_true",
+        help="Run in demo mode using fake data and no external API calls"
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Alias for --demo (no API calls, no external changes)"
+    )
+    
+    args = parser.parse_args(argv)
     
     # Support both --demo and --dry-run flags
     demo_mode = args.demo or args.dry_run
@@ -385,18 +427,11 @@ def main() -> int:
     try:
         automation = DailyAutomation(demo_mode=demo_mode)
         return automation.run()
-    except ValueError as e:
-        # Configuration errors are already logged by _initialize_clients
-        logger.error("=" * 60)
-        logger.error("❌ Configuration error - cannot start automation")
-        logger.error("=" * 60)
-        return 1
     except Exception as e:
-        logger.error("=" * 60)
-        logger.error(f"❌ Fatal error: {e}", exc_info=True)
-        logger.error("=" * 60)
+        # Error already logged inside run() or __init__
+        logger.error(f"❌ Fatal error: {e}")
         return 1
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    raise SystemExit(main())

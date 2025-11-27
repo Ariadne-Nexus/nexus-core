@@ -20,8 +20,9 @@ export default function DemoPreview() {
       if (!res.ok) throw new Error(`Status ${res.status}`);
       const json = await res.json();
       setData({ summary: json.summary || "", log: json.log || "" });
-    } catch (err: any) {
-      setError(err?.message || "Failed to fetch demo outputs");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Failed to fetch demo outputs";
+      setError(message);
       setData(null);
     } finally {
       setLoading(false);
