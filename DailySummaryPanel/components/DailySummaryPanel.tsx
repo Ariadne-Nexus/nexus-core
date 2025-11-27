@@ -27,7 +27,7 @@ export function DailySummaryPanel() {
         }
         const json = await res.json();
         setData(json);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Failed to fetch /api/daily-summary:", err);
         setError("Could not load daily summary.");
       } finally {
