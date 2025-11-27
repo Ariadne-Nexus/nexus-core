@@ -275,12 +275,30 @@ cat output/daily_summary.json | jq
 
 ### Testing the Stack
 
+**Run Automation:**
+
+```bash
+# Demo mode (no API calls, uses stubbed data)
+python3 scripts/daily_v2.py --demo
+
+# Production mode (requires API keys in .env.local)
+python3 scripts/daily_v2.py
+
+# Or use the convenience wrapper
+./run-daily.sh            # Production mode
+./run-daily.sh --demo     # Demo mode
+```
+
+**Required Environment Variables for Production:**
+- `OPENAI_API_KEY`: Get from [OpenAI Platform](https://platform.openai.com/api-keys)
+- `GITHUB_TOKEN`: Get from [GitHub Settings](https://github.com/settings/tokens) (needs `repo` scope)
+- `REPO_NAME`: Your repository in format `owner/repo`
+
+**Other Tests:**
+
 ```bash
 # Validate everything
 bash scripts/validate.sh
-
-# Test Python only
-python3 scripts/daily_v2.py --demo
 
 # Test Next.js build
 npm run build

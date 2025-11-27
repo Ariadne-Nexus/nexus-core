@@ -79,28 +79,43 @@ class DailyAutomation:
         
         # OpenAI
         openai_key = os.getenv("OPENAI_API_KEY")
-        if openai_key and openai_key != "your-openai-api-key-here":
+        if not openai_key or openai_key == "your-openai-api-key-here":
+            logger.error("❌ OPENAI_API_KEY not configured")
+            logger.error("   Set OPENAI_API_KEY in .env.local or run with --demo flag")
+            logger.error("   Get your API key from: https://platform.openai.com/api-keys")
+            raise ValueError("OPENAI_API_KEY is required for production mode")
+        
+        try:
             self.openai_client = OpenAI(api_key=openai_key)
             logger.info("✓ OpenAI client initialized")
-        else:
-            logger.warning("⚠️  OPENAI_API_KEY not configured")
+        except Exception as e:
+            logger.error(f"❌ Failed to initialize OpenAI client: {e}")
+            raise
         
         # GitHub
         github_token = os.getenv("GITHUB_TOKEN")
         repo_name = os.getenv("REPO_NAME")
         
-        if github_token and github_token != "your-github-token-here":
+        if not github_token or github_token == "your-github-token-here":
+            logger.error("❌ GITHUB_TOKEN not configured")
+            logger.error("   Set GITHUB_TOKEN in .env.local or run with --demo flag")
+            logger.error("   Get your token from: https://github.com/settings/tokens")
+            raise ValueError("GITHUB_TOKEN is required for production mode")
+        
+        if not repo_name or repo_name == "owner/repo":
+            logger.error("❌ REPO_NAME not configured")
+            logger.error("   Set REPO_NAME in .env.local (format: owner/repo)")
+            raise ValueError("REPO_NAME is required for production mode")
+        
+        try:
             self.github_client = Github(github_token)
-            if repo_name and repo_name != "owner/repo":
-                try:
-                    self.repo = self.github_client.get_repo(repo_name)
-                    logger.info(f"✓ GitHub client initialized for {repo_name}")
-                except GithubException as e:
-                    logger.error(f"Failed to access repository {repo_name}: {e}")
-            else:
-                logger.warning("⚠️  REPO_NAME not configured")
-        else:
-            logger.warning("⚠️  GITHUB_TOKEN not configured")
+            self.repo = self.github_client.get_repo(repo_name)
+            logger.info(f"✓ GitHub client initialized for {repo_name}")
+        except GithubException as e:
+            logger.error(f"❌ Failed to access repository {repo_name}: {e}")
+            logger.error("   Check that GITHUB_TOKEN has 'repo' scope")
+            logger.error("   Check that REPO_NAME is correct (format: owner/repo)")
+            raise
 
     def ingest_notes(self) -> List[str]:
         """Ingest notes from configured source"""
@@ -332,12 +347,26 @@ Format as JSON with keys: highlights, action_items, assessment"""
                 logger.info("\n💡 To enable live API calls:")
                 logger.info("   1. Install dependencies: pip install -r scripts/requirements.txt")
                 logger.info("   2. Configure .env.local with API keys")
-                logger.info("   3. Run again: ./run-daily.sh\n")
+                logger.info("   3. Run again: python3 scripts/daily_v2.py\n")
+            
+            # Final success message
+            logger.info("=" * 60)
+            logger.info("✅✅✅ Daily v2 automation run finished successfully ✅✅✅")
+            logger.info("=" * 60)
             
             return 0
             
+        except ValueError as e:
+            # Configuration errors (missing API keys, etc.)
+            logger.error("=" * 60)
+            logger.error(f"❌ Configuration Error: {e}")
+            logger.error("=" * 60)
+            return 1
         except Exception as e:
+            # Unexpected errors
+            logger.error("=" * 60)
             logger.error(f"❌ Automation failed: {e}", exc_info=True)
+            logger.error("=" * 60)
             return 1
 
 
@@ -349,8 +378,20 @@ def main() -> int:
     parser.add_argument("--demo", action="store_true", help="Run in demo mode (no API calls)")
     args = parser.parse_args()
     
-    automation = DailyAutomation(demo_mode=args.demo)
-    return automation.run()
+    try:
+        automation = DailyAutomation(demo_mode=args.demo)
+        return automation.run()
+    except ValueError as e:
+        # Configuration errors are already logged by _initialize_clients
+        logger.error("=" * 60)
+        logger.error("❌ Configuration error - cannot start automation")
+        logger.error("=" * 60)
+        return 1
+    except Exception as e:
+        logger.error("=" * 60)
+        logger.error(f"❌ Fatal error: {e}", exc_info=True)
+        logger.error("=" * 60)
+        return 1
 
 
 if __name__ == "__main__":
