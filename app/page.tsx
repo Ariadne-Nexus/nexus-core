@@ -17,6 +17,12 @@ export default function HomePage() {
           </p>
           <div className="flex flex-wrap gap-3 pt-2">
             <a
+              href="/automation"
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition"
+            >
+              View Automation Details
+            </a>
+            <a
               href="/api/daily-summary"
               target="_blank"
               rel="noreferrer"
@@ -28,7 +34,7 @@ export default function HomePage() {
               href="https://cal.com/avidelta/15min"
               target="_blank"
               rel="noreferrer"
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition"
+              className="px-4 py-2 bg-transparent border border-zinc-700 rounded-lg text-zinc-200 hover:bg-zinc-800 transition"
             >
               Book a 15-min Fit Call
             </a>
