@@ -229,7 +229,7 @@ export default function ServicesPage() {
         <section className="bg-blue-600 rounded-xl p-8 text-center space-y-4">
           <h2 className="text-2xl font-semibold">Ready to automate?</h2>
           <p className="text-blue-100 max-w-2xl mx-auto">
-            Book a 15-minute fit call to discuss your workflows and find the right engagement model.
+            Book a 15-minute fit call to walk through your current workflows, rough pain points, and what "done" looks like. We'll decide together whether hourly, a sprint, or a retainer makes the most sense.
           </p>
           <div className="flex flex-wrap gap-3 justify-center pt-2">
             <a
@@ -247,6 +247,23 @@ export default function ServicesPage() {
               Back to Home
             </a>
           </div>
+        </section>
+
+        {/* Automation Stack */}
+        <section className="border-t border-zinc-800 pt-12 space-y-4">
+          <h2 className="text-2xl font-semibold">Automation stack behind this site</h2>
+          <p className="text-zinc-400 max-w-3xl">
+            Under the hood, this site runs on the same kind of system I build for clients:
+          </p>
+          <ul className="space-y-2 text-zinc-300 max-w-3xl">
+            <li>• A daily Python runner (<code className="text-blue-400">daily_v2.py</code>) that ingests notes</li>
+            <li>• OpenAI-powered summarization to turn raw text into structured updates</li>
+            <li>• Optional GitHub issue creation for action items</li>
+            <li>• A Next.js frontend on Vercel (ariadnenexus.com) as the presentation layer</li>
+          </ul>
+          <p className="text-zinc-400 max-w-3xl">
+            What you're reading here is the "front-of-house" view of the same automation engine I'd deploy inside your business.
+          </p>
         </section>
       </div>
     </main>
