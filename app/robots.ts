@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/api/demo/view"],
       },
     ],
-    sitemap: "https://avidelta.vercel.app/sitemap.xml",
+    sitemap: "https://ariadnenexus.com/sitemap.xml",
   };
 }

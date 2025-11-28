@@ -1,10 +1,10 @@
-# AI-Powered Automation Portfolio
+# Avidelta Automation + Portfolio Stack
 
 > **One-command daily runner that transforms work notes into structured summaries and GitHub issues using AI**
 
-A production-ready automation framework demonstrating Python + OpenAI + GitHub API integration with a Next.js dashboard. Built for solo operators, small teams, and portfolio demonstration.
+This repo combines a **Python automation engine** with a **Next.js portfolio frontend** and is structured to be friendly for both humans and AI coding assistants.
 
-**Live Demo:** https://avidelta.vercel.app
+**Live Demo:** https://ariadnenexus.com
 
 ---
 
@@ -16,22 +16,24 @@ A full-stack automation system that ingests daily notes, generates AI summaries,
 
 ## 💼 What This Project Demonstrates
 
-This repo shows how I design and ship **automation-first workflows**:
+This project shows how I design and ship **automation-first workflows** that are ready for clients, investors, and teammates:
 
 - A one-command **daily runner** (Python) that:
   - Activates a virtual environment
-  - Pulls unstructured notes
-  - Uses the OpenAI API to generate clean daily summaries
-  - Can be extended to open/update GitHub issues
+  - Pulls unstructured notes from a local directory (markdown/text)
+  - Uses the OpenAI API to generate clean, structured daily summaries
+  - Can create labeled GitHub issues from action items
+  - Supports `--demo` and `--dry-run` for safe testing
 
 - A **Next.js portfolio frontend** that:
-  - Presents the system as a client- and investor-ready product
-  - Is wired for Vercel deployment (`npm run build` passes)
-  - Can surface automation outputs as a live dashboard
+  - Presents the automation system as a client- and investor-ready product
+  - Uses the App Router and is deployable to Vercel
+  - Builds cleanly with `npm run build`
+  - Can be extended to surface automation outputs as a live dashboard
 
-The repo is structured to be **AI-friendly** for Copilot/LLM agents via
-`codex-assistant.mjs`, which tells automated tools how to debug, refactor,
-and extend it safely.
+The repo is also designed to be **AI-friendly**. A dedicated config file,
+`codex-assistant.mjs`, tells Copilot/LLM agents how to safely debug, refactor,
+and extend the codebase.
 
 ---
 
@@ -142,13 +144,14 @@ cd nextjs
 ```
 
 **What the setup script does:**
-1. ✅ Checks prerequisites (Python 3, Node.js, npm)
-2. ✅ Creates Python virtual environment (venv/)
-3. ✅ Installs Python dependencies (openai, PyGithub, python-dotenv)
-4. ✅ Installs Node.js dependencies (Next.js, React, TypeScript)
-5. ✅ Creates .env.local from template
-6. ✅ Sets up output directories
-7. ✅ Provides clear next steps
+1. ✅ Creates Python virtual environment (`venv/` in repo root)
+2. ✅ Installs Python dependencies from `scripts/requirements.txt` (openai, PyGithub, python-dotenv)
+3. ✅ Installs Node.js dependencies (Next.js 16, React 19, TypeScript)
+4. ✅ Creates output directories (`output/notes`, `output/backups`)
+5. ✅ Copies `.env.example` to `.env.local` if needed
+6. ✅ Provides clear next steps
+
+**Note:** The script is already executable. If needed: `chmod +x scripts/setup.sh`
 
 **Time to complete:** ~2-3 minutes (depending on internet speed)
 
@@ -216,14 +219,16 @@ open http://localhost:3000/api/daily-summary
 | Command | Purpose | When to Use |
 |---------|---------|-------------|
 | `python3 scripts/daily_v2.py --demo` | Run with demo data | Testing without API keys |
-| `python3 scripts/daily_v2.py` | Run in production mode | Real automation with API keys |
+| `python3 scripts/daily_v2.py --dry-run` | Alias for --demo | Common convention for safe testing |
+| `python3 scripts/daily_v2.py` | Run in production mode | Real automation with API keys configured |
+| `source venv/bin/activate` | Activate Python virtualenv | Before running scripts manually |
 | `./run-daily.sh` | Automated run + sync | Convenience wrapper for production |
-| `./setup.sh` | One-command setup | Initial setup or reset environment |
+| `./scripts/setup.sh` | One-command setup | Initial setup or reset environment |
 | `bash scripts/validate.sh` | Run all tests | Comprehensive validation |
 
 ### Live Deployment
 
-- **Production:** https://avidelta.vercel.app
+- **Production:** https://ariadnenexus.com
 - **Auto-deploy:** Push to `main` branch triggers Vercel deployment
 - **Status:** Built with Next.js 16.0.0, deployed via Vercel
 
@@ -290,14 +295,36 @@ nextjs/
 
 ### Running the Daily Automation
 
+**Requirements:**
+- Python 3.11+
+- Virtual environment (`venv`) in the repo root
+- For non-demo runs:
+  - `OPENAI_API_KEY` set in `.env.local`
+  - `GITHUB_TOKEN` set in `.env.local` (with `repo` scope)
+  - `REPO_NAME` set in `.env.local` (format: `owner/repo`)
+
+**Execute from the repo root:**
+
 ```bash
-# one-time setup
+# One-time setup (if not already done)
 ./scripts/setup.sh
 
-# activate virtualenv and run
-source .venv/bin/activate
-python daily_v2.py --dry-run
+# Activate virtualenv
+source venv/bin/activate
+
+# Demo mode - safe to try, no real API calls
+python3 scripts/daily_v2.py --demo
+
+# Dry run - alias for demo mode
+python3 scripts/daily_v2.py --dry-run
+
+# Production mode - uses OpenAI + GitHub integrations
+python3 scripts/daily_v2.py
 ```
+
+**Output Files:**
+- `output/daily_summary.json` - Main output for Next.js frontend
+- `output/audit_YYYYMMDD_HHMMSS.json` - Timestamped audit log
 
 ---
 
@@ -332,7 +359,7 @@ npm start
   - `/api/health` - Basic health check
 
 **Live Deployment:**
-- Production: https://avidelta.vercel.app
+- Production: https://ariadnenexus.com
 - Auto-deploys on push to `main` branch
 - Vercel handles SSL, CDN, and scaling automatically
 
@@ -386,10 +413,10 @@ npm run lint
 
 | Endpoint | Description | Example |
 |----------|-------------|---------|
-| `/` | Portfolio homepage | [View](https://avidelta.vercel.app) |
-| `/api/daily-summary` | Automation output (JSON) | [View](https://avidelta.vercel.app/api/daily-summary) |
-| `/api/demo/view` | Demo visualization | [View](https://avidelta.vercel.app/api/demo/view) |
-| `/api/status` | Comprehensive status | [View](https://avidelta.vercel.app/api/status) |
+| `/` | Portfolio homepage | [View](https://ariadnenexus.com) |
+| `/api/daily-summary` | Automation output (JSON) | [View](https://ariadnenexus.com/api/daily-summary) |
+| `/api/demo/view` | Demo visualization | [View](https://ariadnenexus.com/api/demo/view) |
+| `/api/status` | Comprehensive status | [View](https://ariadnenexus.com/api/status) |
 
 ### Health Checks
 
@@ -406,9 +433,9 @@ npm run lint
 
 ```bash
 # Production endpoints
-curl -sS https://avidelta.vercel.app/api/status | jq
-curl -sS https://avidelta.vercel.app/api/daily-summary | jq
-curl -sS https://avidelta.vercel.app/api/health
+curl -sS https://ariadnenexus.com/api/status | jq
+curl -sS https://ariadnenexus.com/api/daily-summary | jq
+curl -sS https://ariadnenexus.com/api/health
 
 # Local development
 curl -sS http://localhost:3000/api/status | jq
@@ -533,7 +560,7 @@ git push origin main
 **What Happens:**
 1. ✅ GitHub triggers Vercel deployment
 2. ✅ Next.js builds automatically
-3. ✅ Deploys to https://avidelta.vercel.app
+3. ✅ Deploys to https://ariadnenexus.com
 4. ✅ All API routes are live immediately
 
 ### Manual Deployment
@@ -618,7 +645,7 @@ This isn't a tutorial project or toy application—it's a **production system** 
 
 ## 🔗 Links
 
-- **Live Demo**: https://avidelta.vercel.app
+- **Live Demo**: https://ariadnenexus.com
 - **GitHub**: https://github.com/dotlink-ops/nextjs
 - **Documentation**: See `AUTOMATION_GUIDE.md`, `QUICKSTART.md`
 - **Sample Outputs**: See `SAMPLE_OUTPUTS/` directory

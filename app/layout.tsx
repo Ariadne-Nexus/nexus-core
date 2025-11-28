@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Avidelta",
     description: "One-command automations, AI workflows, and developer environments.",
-    url: "https://avidelta.vercel.app",
+    url: "https://ariadnenexus.com",
     siteName: "Avidelta",
     type: "website",
     locale: "en_US",
