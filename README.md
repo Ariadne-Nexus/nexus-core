@@ -138,6 +138,7 @@ cat output/daily_summary.json | jq
 - **Node.js 18+** (20 or 22 recommended)
 - **Python 3.11+**
 - **Git**
+- **Pre-commit** (optional but recommended for contributors)
 
 ### One-Command Setup ⭐
 
@@ -148,6 +149,10 @@ cd nextjs
 
 # Run automated setup (Python + Next.js)
 ./setup.sh
+
+# Install pre-commit hooks (recommended for contributors)
+pip install pre-commit detect-secrets
+pre-commit install
 ```
 
 **What the setup script does:**
@@ -157,6 +162,13 @@ cd nextjs
 4. ✅ Creates output directories (`output/notes`, `output/backups`)
 5. ✅ Copies `.env.example` to `.env.local` if needed
 6. ✅ Provides clear next steps
+
+**Pre-commit hooks (optional but recommended):**
+- Automatically validates code quality before commits
+- Checks YAML/JSON syntax, whitespace, line endings
+- Detects accidentally committed secrets (API keys, tokens)
+- Updates security dashboard automatically
+- Run `pre-commit install` to enable (requires one-time setup)
 
 **Note:** The script is already executable. If needed: `chmod +x scripts/setup.sh`
 
