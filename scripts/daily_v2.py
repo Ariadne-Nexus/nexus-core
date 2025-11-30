@@ -49,9 +49,20 @@ except ImportError:
 
 
 class DailyAutomation:
-    """Main automation orchestrator"""
+    """Main automation orchestrator."""
 
     def __init__(self, demo_mode: bool = False):
+        """Set up paths, clients, and runtime mode.
+
+        Args:
+            demo_mode: When True, skip external API calls and use stubbed data so the
+                script can run safely without network access.
+
+        Side Effects:
+            - Creates local output and notes directories if they do not exist.
+            - Initializes OpenAI and GitHub clients unless running in demo mode or
+              dependencies are missing.
+        """
         self.demo_mode = demo_mode or not HAS_DEPS
         self.project_root = Path(__file__).parent.parent
         self.output_dir = Path(os.getenv("OUTPUT_DIR", self.project_root / "output"))
@@ -119,7 +130,17 @@ class DailyAutomation:
             raise
 
     def ingest_notes(self) -> List[str]:
-        """Ingest notes from configured source"""
+        """Load text notes that feed the automation run.
+
+        Returns:
+            A list of note strings gathered from Markdown or text files in the
+            configured notes directory. If no files are found, a small set of demo
+            notes is returned.
+
+        Side Effects:
+            Logs progress and warnings; creates the notes directory if missing during
+            initialization.
+        """
         logger.info("📥 Ingesting notes...")
         notes = []
         
@@ -149,7 +170,19 @@ class DailyAutomation:
         return notes
 
     def generate_summary(self, notes: List[str]) -> Dict[str, Any]:
-        """Generate AI-powered summary from notes"""
+        """Turn raw notes into a structured summary.
+
+        Args:
+            notes: List of raw note strings to analyze.
+
+        Returns:
+            A dictionary with ``highlights``, ``action_items``, and ``assessment`` keys
+            describing the day.
+
+        Side Effects:
+            - Calls the OpenAI API when not in demo mode.
+            - Logs progress and any API errors.
+        """
         logger.info("🤖 Generating summary...")
         
         if not notes:
@@ -207,7 +240,15 @@ Format as JSON with keys: highlights, action_items, assessment"""
             return self._generate_demo_summary(notes)
 
     def _generate_demo_summary(self, notes: List[str]) -> Dict[str, Any]:
-        """Generate a demo summary without API calls"""
+        """Build a canned summary when running without external services.
+
+        Args:
+            notes: The notes that would have been analyzed; only the count is used.
+
+        Returns:
+            Static highlight, action item, and assessment data suitable for local
+            testing or demos.
+        """
         return {
             "highlights": [
                 f"Processed {len(notes)} notes from daily workflow",
@@ -223,7 +264,19 @@ Format as JSON with keys: highlights, action_items, assessment"""
         }
 
     def create_github_issues(self, action_items: List[str]) -> List[Dict[str, Any]]:
-        """Create GitHub issues from action items"""
+        """Open GitHub issues that mirror each action item.
+
+        Args:
+            action_items: Actionable tasks extracted from the summary.
+
+        Returns:
+            A list of metadata dictionaries for each issue that was created or would
+            be created in demo mode (issue number, title, URL, and labels).
+
+        Side Effects:
+            - Calls the GitHub API to create issues when not in demo mode.
+            - Logs each created issue and any errors encountered.
+        """
         logger.info("📋 Creating GitHub issues...")
         created_issues = []
         
@@ -274,7 +327,21 @@ Format as JSON with keys: highlights, action_items, assessment"""
         return created_issues
 
     def save_output(self, notes: List[str], summary: Dict[str, Any], issues: List[Dict[str, Any]]) -> Path:
-        """Save structured output for Next.js frontend"""
+        """Persist summary data for the Next.js frontend and audit trail.
+
+        Args:
+            notes: The raw notes that were processed.
+            summary: Structured summary data produced from the notes.
+            issues: GitHub issue metadata objects created during the run.
+
+        Returns:
+            Path to the main ``daily_summary.json`` file written to disk.
+
+        Side Effects:
+            - Writes the main summary JSON and a timestamped audit log to the output
+              directory.
+            - Logs the locations of the saved files.
+        """
         logger.info("💾 Saving output...")
         
         timestamp = datetime.now(timezone.utc)
@@ -310,17 +377,21 @@ Format as JSON with keys: highlights, action_items, assessment"""
         return output_file
 
     def run(self) -> int:
-        """
-        Execute the daily automation workflow.
-        
+        """Run the end-to-end automation flow.
+
         Steps:
-        1. Ingest notes from configured source
-        2. Generate summary (OpenAI or demo fallback)
-        3. Create GitHub issues from action items (skipped in demo mode)
-        4. Save outputs to disk
-        
+            1. Ingest notes from the configured source directory.
+            2. Generate an AI summary (or a demo summary when offline).
+            3. Create GitHub issues for action items unless running in demo mode.
+            4. Save output files for the frontend and audit history.
+
         Returns:
-            0 on success, 1 on failure
+            0 when the workflow completes successfully, or 1 if any step raises an
+            error.
+
+        Side Effects:
+            - Triggers OpenAI and GitHub API calls depending on mode.
+            - Writes JSON output files and detailed log entries.
         """
         start_time = datetime.now(timezone.utc)
         
@@ -393,14 +464,19 @@ Format as JSON with keys: highlights, action_items, assessment"""
 
 
 def main(argv: Optional[List[str]] = None) -> int:
-    """
-    Main entry point for the daily automation runner.
-    
+    """CLI entry point that wires user flags into the automation flow.
+
     Args:
-        argv: Command-line arguments (defaults to sys.argv if None)
-        
+        argv: Optional list of command-line arguments. If omitted, defaults to
+            ``sys.argv``.
+
     Returns:
-        0 on success, 1 on failure
+        Exit code ``0`` for success or ``1`` if initialization or the workflow
+        fails.
+
+    Side Effects:
+        - Parses command-line flags that control demo/dry-run behavior.
+        - Emits logs for initialization and fatal errors.
     """
     import argparse
     
