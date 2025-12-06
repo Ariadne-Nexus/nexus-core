@@ -31,8 +31,8 @@ Nexus automates the daily workflow of turning unstructured notes into actionable
 
 ```bash
 # Clone and setup
-git clone https://github.com/dotlink-ops/Avidelta.git
-cd Avidelta
+git clone https://github.com/dotlink-ops/ariadnenexus.git
+cd ariadnenexus
 ./setup.sh
 
 # Run automation in demo mode (no API keys needed)
