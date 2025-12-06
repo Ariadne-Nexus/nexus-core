@@ -12,8 +12,8 @@ This guide covers environment configuration and sanity checks for running Ariadn
 
 ```bash
 # Clone and setup
-git clone https://github.com/dotlink-ops/Avidelta.git
-cd Avidelta
+git clone https://github.com/dotlink-ops/ariadnenexus.git
+cd ariadnenexus
 ./setup.sh
 ```
 
