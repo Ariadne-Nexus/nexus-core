@@ -127,7 +127,7 @@ bash scripts/validate.sh            # Full test suite
 ## Links
 
 - **Live Demo**: https://www.ariadnenexus.com
-- **GitHub**: https://github.com/dotlink-ops/Avidelta
+- **GitHub**: https://github.com/dotlink-ops/ariadnenexus
 
 ---
 
