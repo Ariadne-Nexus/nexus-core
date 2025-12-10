@@ -98,7 +98,7 @@ Avidelta is a **production-ready AI automation platform** solving a critical wor
 - Multi-tenant automation platform for distributed teams
 - Tiered pricing: Starter ($29/mo), Team ($99/mo), Enterprise (custom)
 - Target market: 50-500 person companies with distributed workflows
-- **TAM:** $2.4B (workflow automation market, growing 23% CAGR)
+- **TAM:** ~$2.4B+ workflow automation market (estimated, growing 20%+ CAGR)
 
 ### 2. **White-Label Licensing**
 - Rebrandable automation engine for enterprise clients
@@ -177,7 +177,7 @@ Avidelta is a **production-ready AI automation platform** solving a critical wor
 ## 💰 Funding Ask
 
 ### Seed Round: $500K
-**Valuation:** $3M pre-money  
+**Proposed Valuation:** $3M pre-money (subject to discussion based on comparable SaaS automation platforms)  
 **Use of Funds:**
 
 - **60% Engineering ($300K)**
