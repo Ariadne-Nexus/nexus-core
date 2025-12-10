@@ -13,6 +13,7 @@
 **Avidelta** (branded as **Ariadne Nexus** for clients) is a **production automation platform** that demonstrates how to build AI-powered workflows for real-world business operations. It combines:
 
 - **Python automation engine** (`daily_v2.py`) - Ingests unstructured notes, generates structured summaries with OpenAI, creates GitHub issues from action items
+- **Sales pipeline automation** (`sales_pipeline_pull.py`) - Automated data pull from CRM/CSV sources with analytics and reporting
 - **Next.js 16 dashboard** - Modern App Router frontend with live automation status, workflow history, and security metrics
 - **GitHub Actions CI/CD** - Automated daily runs, security scanning, pre-commit hooks, and health checks
 - **Production security** - Secret health monitoring, CSP reporting, security dashboards, automated compliance tracking
@@ -179,21 +180,26 @@ This project provides a complete automation workflow:
 1. **📥 Note Ingestion**: Reads markdown/text files from `output/notes/`
 2. **🤖 AI Summarization**: Uses OpenAI GPT-4 Turbo to extract highlights, action items, and assessments
 3. **📋 GitHub Integration**: Automatically creates labeled issues from action items
-4. **💾 JSON Output**: Saves structured data to `output/daily_summary.json`
-5. **🌐 Next.js Dashboard**: Serves results through modern API routes and React components
-6. **📊 Audit Logs**: Maintains timestamped audit trail in `output/audit_*.json`
-7. **⏰ GitHub Actions**: Automated daily runs at 5 AM PT with artifact uploads
+4. **💼 Sales Pipeline Tracking**: Automated data pull from CSV/CRM sources with analytics
+5. **💾 JSON Output**: Saves structured data to `output/daily_summary.json` and `output/sales_pipeline.json`
+6. **🌐 Next.js Dashboard**: Serves results through modern API routes and React components
+7. **📊 Audit Logs**: Maintains timestamped audit trail in `output/audit_*.json`
+8. **⏰ GitHub Actions**: Automated daily runs at 5 AM PT with artifact uploads
 
 ### Demo Mode
 
 Works out-of-the-box without API keys using realistic demo data—perfect for testing and demonstrations.
 
 ```bash
-# Run automation with demo data (no API keys needed)
+# Run daily notes automation with demo data (no API keys needed)
 python3 scripts/daily_v2.py --demo
+
+# Run sales pipeline automation with demo data
+python3 scripts/sales_pipeline_pull.py --demo
 
 # View results
 cat output/daily_summary.json | jq
+cat output/sales_pipeline.json | jq
 ```
 
 ---
@@ -353,10 +359,12 @@ open http://localhost:3000/api/daily-summary
 
 | Command | Purpose | When to Use |
 |---------|---------|-------------|
-| `python3 scripts/daily_v2.py --demo` | Run with demo data | Testing without API keys |
+| `python3 scripts/daily_v2.py --demo` | Run notes automation with demo data | Testing without API keys |
 | `python3 scripts/daily_v2.py --dry-run` | Alias for --demo | Common convention for safe testing |
-| `python3 scripts/daily_v2.py` | Run in production mode | Real automation with API keys configured |
-| `source .venv/bin/activate` | Activate Python virtualenv | Before running scripts manually ||
+| `python3 scripts/daily_v2.py` | Run notes automation in production mode | Real automation with API keys configured |
+| `python3 scripts/sales_pipeline_pull.py --demo` | Run sales pipeline with demo data | Testing sales pipeline automation |
+| `python3 scripts/sales_pipeline_pull.py` | Run sales pipeline in production mode | Pull real sales data from configured source |
+| `source .venv/bin/activate` | Activate Python virtualenv | Before running scripts manually |
 | `./run-daily.sh` | Automated run + sync | Convenience wrapper for production |
 
 ### Live Deployment
