@@ -76,6 +76,7 @@ try:
         Github,
         GithubException,
         RateLimitExceededException,
+        UnknownObjectException,
     )
     HAS_DEPS = True
 except ImportError:
@@ -213,7 +214,7 @@ class DailyAutomation:
             raise RuntimeError("OpenAI client initialization failed") from e
 
         try:
-            self.github_client = Github(self.config.github_token)
+            self.github_client = Github(auth=Github.Auth.Token(self.config.github_token))
             self.repo = self.github_client.get_repo(self.config.repo_name)
             logger.info(
                 "✓ API clients initialized successfully",
@@ -430,10 +431,10 @@ class DailyAutomation:
                     "labels": [label.name for label in issue.labels],
                 })
                 logger.info(f"  Created issue #{issue.number}: {issue.title}")
-            except RateLimitException as e:
+            except RateLimitExceededException as e:
                 logger.error(f"❌ GitHub rate limit reached while creating issue for: {item[:50]}...")
-                logger.error(f"   Rate limit resets at: {e.data.get('reset', 'unknown')}")
                 logger.error("   Wait before retrying or reduce request volume.")
+                logger.debug(f"GitHub rate limit details: {e}")
             except UnknownObjectException as e:
                 logger.error(f"❌ Repository or resource not found: {self.config.repo_name}")
                 logger.error("   Verify the GITHUB_REPO environment variable is correct.")
@@ -518,12 +519,12 @@ class DailyAutomation:
 
         # Save main output
         output_file = self.output_dir / "daily_summary.json"
-        output_file.write_text(json.dumps(output_data, indent=2), encoding="utf-8")
+        output_file.write_text(json.dumps(output_data, indent=2, ensure_ascii=False), encoding="utf-8")
         logger.info(f"  Saved: {output_file}")
 
         # Save audit log
         log_file = self.output_dir / f"audit_{timestamp.strftime('%Y%m%d_%H%M%S')}.json"
-        log_file.write_text(json.dumps(output_data, indent=2), encoding="utf-8")
+        log_file.write_text(json.dumps(output_data, indent=2, ensure_ascii=False), encoding="utf-8")
         logger.info(f"  Saved: {log_file}")
 
         logger.info("✓ Output saved successfully")
