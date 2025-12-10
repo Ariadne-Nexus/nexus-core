@@ -221,7 +221,16 @@ def redact_secrets_health_column(dashboard_text: str) -> str:
             parts[3] = " [REDACTED] "
             res.append("|".join(parts))
     else:
-        return dashboard_text  # can't find table, fallback
+        # Fallback: redact all table rows in case header matching failed
+        def redact_secrets_col(line):
+            # This matches and redacts the "Secrets Health" column (3rd field)
+            # Assumes: | ... | ... | secrets | ... | ... | ... |
+            table_row = re.compile(r"^(\|\s*[^\|]+\s*\|\s*[^\|]+\s*\|)(\s*[^\|]+\s*)(\|[^\n]*)$")
+            m = table_row.match(line)
+            if m:
+                return f"{m.group(1)} [REDACTED] {m.group(3)}"
+            return line
+        return "\n".join(redact_secrets_col(l) for l in dashboard_text.splitlines())
     # Add any below-table lines
     # Already copied all lines after the table
     res.extend(lines[len(res):])
