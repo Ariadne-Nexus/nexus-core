@@ -36,8 +36,8 @@ export async function GET() {
     const demoData = {
       timestamp: new Date().toISOString(),
       source: "demo",
-      total_pipeline_value: 285000,
-      deals_count: 5,
+      total_pipeline_value: 250000,
+      deals_count: 3,
       deals: [
         {
           id: "DEAL-001",
@@ -80,7 +80,7 @@ export async function GET() {
         active_deals: 3,
         closed_won: 0,
         avg_deal_size: 83333,
-        weighted_pipeline: 130500,
+        weighted_pipeline: 84750,
         stages: {
           Discovery: 1,
           "Proposal Sent": 1,

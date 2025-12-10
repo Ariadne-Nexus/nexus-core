@@ -180,20 +180,25 @@ This project provides a complete automation workflow:
 2. **🤖 AI Summarization**: Uses OpenAI GPT-4 Turbo to extract highlights, action items, and assessments
 3. **📋 GitHub Integration**: Automatically creates labeled issues from action items
 4. **💾 JSON Output**: Saves structured data to `output/daily_summary.json`
-5. **🌐 Next.js Dashboard**: Serves results through modern API routes and React components
-6. **📊 Audit Logs**: Maintains timestamped audit trail in `output/audit_*.json`
-7. **⏰ GitHub Actions**: Automated daily runs at 5 AM PT with artifact uploads
+5. **📊 Sales Pipeline**: Automated data pull from CRM systems with structured tracking
+6. **🌐 Next.js Dashboard**: Serves results through modern API routes and React components
+7. **📝 Audit Logs**: Maintains timestamped audit trail in `output/audit_*.json`
+8. **⏰ GitHub Actions**: Automated daily runs at 5 AM PT with artifact uploads
 
 ### Demo Mode
 
 Works out-of-the-box without API keys using realistic demo data—perfect for testing and demonstrations.
 
 ```bash
-# Run automation with demo data (no API keys needed)
+# Run daily automation with demo data (no API keys needed)
 python3 scripts/daily_v2.py --demo
+
+# Run sales pipeline pull with demo data
+python3 scripts/pull_sales_pipeline.py --demo
 
 # View results
 cat output/daily_summary.json | jq
+cat output/sales_pipeline.json | jq
 ```
 
 ---
@@ -539,6 +544,7 @@ npm run lint
 |----------|-------------|---------|
 | `/` | Portfolio homepage | [View](https://ariadnenexus.com) |
 | `/api/daily-summary` | Automation output (JSON) | [View](https://ariadnenexus.com/api/daily-summary) |
+| `/api/sales-pipeline` | Sales pipeline data (JSON) | [View](https://ariadnenexus.com/api/sales-pipeline) |
 | `/api/demo/view` | Demo visualization | [View](https://ariadnenexus.com/api/demo/view) |
 | `/api/status` | Comprehensive status | [View](https://ariadnenexus.com/api/status) |
 
@@ -774,6 +780,7 @@ This isn't a tutorial project or toy application—it's a **production system** 
 - **DEMO.md**: Step-by-step demo walkthrough
 - **UPWORK.md**: Portfolio messaging and one-liners
 - **PRODUCTION_READY.md**: Production readiness verification
+- **docs/SALES_PIPELINE.md**: Sales pipeline automation guide
 - **.copilot-instructions.md**: AI assistant usage guide
 - **codex-assistant.mjs**: Repo Copilot configuration for AI assistants
 - **FIXES_SUMMARY.md**: Change log and architecture decisions

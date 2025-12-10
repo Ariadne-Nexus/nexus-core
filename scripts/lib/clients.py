@@ -327,7 +327,7 @@ class SalesPipelineClient:
         return {
             "timestamp": now.isoformat(),
             "source": "demo",
-            "total_pipeline_value": 285000,
+            "total_pipeline_value": 500000,
             "deals_count": 8,
             "deals": [
                 {
@@ -379,24 +379,54 @@ class SalesPipelineClient:
                     "close_date": (now + timedelta(days=20)).strftime("%Y-%m-%d"),
                     "contact": "Lisa Brown",
                     "company": "FinTech Partners"
+                },
+                {
+                    "id": "DEAL-006",
+                    "name": "Cloud Infrastructure Migration - RetailCo",
+                    "value": 95000,
+                    "stage": "Discovery",
+                    "probability": 40,
+                    "close_date": (now + timedelta(days=35)).strftime("%Y-%m-%d"),
+                    "contact": "David Martinez",
+                    "company": "RetailCo"
+                },
+                {
+                    "id": "DEAL-007",
+                    "name": "DevOps Transformation - MediaGroup",
+                    "value": 65000,
+                    "stage": "Negotiation",
+                    "probability": 70,
+                    "close_date": (now + timedelta(days=12)).strftime("%Y-%m-%d"),
+                    "contact": "Rachel Kim",
+                    "company": "MediaGroup"
+                },
+                {
+                    "id": "DEAL-008",
+                    "name": "AI Implementation - HealthTech",
+                    "value": 55000,
+                    "stage": "Proposal Sent",
+                    "probability": 55,
+                    "close_date": (now + timedelta(days=18)).strftime("%Y-%m-%d"),
+                    "contact": "Tom Anderson",
+                    "company": "HealthTech"
                 }
             ],
             "metrics": {
                 "active_deals": 7,
                 "closed_won": 1,
-                "avg_deal_size": 35625,
-                "weighted_pipeline": 159750,  # Sum of (value * probability)
+                "avg_deal_size": 62500,
+                "weighted_pipeline": 296250,  # Sum of (value * probability)
                 "stages": {
-                    "Discovery": 1,
-                    "Proposal Sent": 2,
-                    "Negotiation": 1,
+                    "Discovery": 2,
+                    "Proposal Sent": 3,
+                    "Negotiation": 2,
                     "Closed Won": 1
                 }
             },
             "top_opportunities": [
-                {"name": "Enterprise Platform Migration", "value": 85000},
                 {"name": "Automation Consulting", "value": 120000},
-                {"name": "API Integration Services", "value": 45000}
+                {"name": "Cloud Infrastructure Migration", "value": 95000},
+                {"name": "Enterprise Platform Migration", "value": 85000}
             ]
         }
     
