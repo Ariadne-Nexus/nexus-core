@@ -52,7 +52,7 @@ jobs:
         run: |
           if [ -f output/sales_pipeline.json ]; then
             echo "✅ Sales pipeline data generated successfully"
-            echo "File size: $(stat -f%z output/sales_pipeline.json 2>/dev/null || stat -c%s output/sales_pipeline.json) bytes"
+            echo "File size: $(stat -c%s output/sales_pipeline.json) bytes"
             echo ""
             echo "Summary:"
             cat output/sales_pipeline.json | python3 -m json.tool | head -30
