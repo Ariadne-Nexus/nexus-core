@@ -1,5 +1,5 @@
 # Investor Meeting — Bulleted Summary
-**Prepared:** December 2025  
+**Prepared:** December 10, 2025  
 **Platform:** Avidelta (Ariadne Nexus)  
 **Meeting Type:** Progress Update & Roadmap Discussion
 
@@ -110,7 +110,7 @@
 ## Investment Ask
 
 ### Seed Round Target
-- **Amount:** $[TBD] seed funding to accelerate development and GTM
+- **Amount:** $500K-$750K seed funding to accelerate development and GTM
 - **Use of funds:**
   - **60% Engineering** — multi-source integrations, team features, mobile app
   - **25% Go-to-Market** — sales team, marketing campaigns, customer success
