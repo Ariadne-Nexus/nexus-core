@@ -1,0 +1,68 @@
+name: Sales Pipeline Data Pull
+
+on:
+  schedule:
+    # Run daily at 6 AM UTC (before the main daily runner)
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    inputs:
+      demo_mode:
+        description: 'Run in demo mode'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  pull-pipeline:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f scripts/requirements.txt ]; then
+            pip install -r scripts/requirements.txt
+          fi
+      
+      - name: Pull sales pipeline data
+        env:
+          SALES_CRM_API_KEY: ${{ secrets.SALES_CRM_API_KEY }}
+          SALES_DATA_SOURCE: ${{ secrets.SALES_DATA_SOURCE }}
+        run: |
+          if [ "${{ inputs.demo_mode }}" == "true" ]; then
+            echo "Running in DEMO mode"
+            python3 scripts/sales_pipeline_pull.py --demo
+          else
+            echo "Running in PRODUCTION mode"
+            python3 scripts/sales_pipeline_pull.py
+          fi
+      
+      - name: Upload pipeline data artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sales-pipeline-data
+          path: output/sales_pipeline.json
+          retention-days: 30
+      
+      - name: Commit updated data
+        run: |
+          git config --local user.name "GitHub Actions"
+          git config --local user.email "actions@github.com"
+          git add output/sales_pipeline.json
+          git diff --staged --quiet || git commit -m "chore: update sales pipeline data [skip ci]"
+      
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
