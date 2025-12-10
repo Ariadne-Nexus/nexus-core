@@ -175,3 +175,59 @@ class AuditLog:
             "status": self.status,
             "errors": self.errors,
         }
+
+
+@dataclass
+class SalesDeal:
+    """Sales deal in the pipeline."""
+    
+    deal_id: str
+    company: str
+    contact: str
+    stage: str
+    value: float
+    probability: int
+    expected_close_date: str
+    last_activity: str
+    
+    @property
+    def weighted_value(self) -> float:
+        """Calculate weighted value based on probability."""
+        return self.value * (self.probability / 100.0)
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary for JSON serialization."""
+        return {
+            "deal_id": self.deal_id,
+            "company": self.company,
+            "contact": self.contact,
+            "stage": self.stage,
+            "value": self.value,
+            "probability": self.probability,
+            "expected_close_date": self.expected_close_date,
+            "last_activity": self.last_activity,
+            "weighted_value": self.weighted_value,
+        }
+
+
+@dataclass
+class PipelineSummary:
+    """Summary statistics for the sales pipeline."""
+    
+    total_deals: int
+    total_value: float
+    weighted_value: float
+    avg_deal_size: float
+    deals_by_stage: Dict[str, int]
+    value_by_stage: Dict[str, float]
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary for JSON serialization."""
+        return {
+            "total_deals": self.total_deals,
+            "total_value": self.total_value,
+            "weighted_value": self.weighted_value,
+            "avg_deal_size": self.avg_deal_size,
+            "deals_by_stage": self.deals_by_stage,
+            "value_by_stage": self.value_by_stage,
+        }

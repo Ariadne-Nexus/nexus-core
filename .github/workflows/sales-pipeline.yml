@@ -1,0 +1,108 @@
+name: Sales Pipeline Data Pull
+
+on:
+  # Run daily at 6 AM PT (2 PM UTC)
+  schedule:
+    - cron: '0 14 * * *'
+  
+  # Allow manual triggering
+  workflow_dispatch:
+    inputs:
+      demo_mode:
+        description: 'Run in demo mode (uses sample data)'
+        required: false
+        type: boolean
+        default: true
+
+jobs:
+  pull-sales-data:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r scripts/requirements.txt
+      
+      - name: Run sales pipeline pull
+        env:
+          SALES_DATA_SOURCE: ${{ secrets.SALES_DATA_SOURCE || './output/sample_sales_data.csv' }}
+          SALES_DATA_TYPE: ${{ secrets.SALES_DATA_TYPE || 'csv' }}
+          OUTPUT_DIR: ./output
+        run: |
+          if [ "${{ inputs.demo_mode }}" = "true" ]; then
+            python3 scripts/sales_pipeline_pull.py --demo
+          else
+            python3 scripts/sales_pipeline_pull.py
+          fi
+      
+      - name: Verify output
+        run: |
+          if [ -f output/sales_pipeline.json ]; then
+            echo "✅ Sales pipeline data generated successfully"
+            echo "File size: $(stat -f%z output/sales_pipeline.json 2>/dev/null || stat -c%s output/sales_pipeline.json) bytes"
+            echo ""
+            echo "Summary:"
+            cat output/sales_pipeline.json | python3 -m json.tool | head -30
+          else
+            echo "❌ Sales pipeline data file not found"
+            exit 1
+          fi
+      
+      - name: Commit and push outputs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Add generated files
+          git add output/sales_pipeline.json output/sales_pipeline_audit_*.json
+          
+          # Check if there are changes to commit
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: update sales pipeline data [skip ci]"
+            git push
+          fi
+      
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: sales-pipeline-data
+          path: |
+            output/sales_pipeline.json
+            output/sales_pipeline_audit_*.json
+          retention-days: 30
+      
+      - name: Job summary
+        if: always()
+        run: |
+          echo "## Sales Pipeline Data Pull Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ -f output/sales_pipeline.json ]; then
+            TOTAL_DEALS=$(cat output/sales_pipeline.json | python3 -c "import sys, json; data=json.load(sys.stdin); print(data['summary']['total_deals'])")
+            TOTAL_VALUE=$(cat output/sales_pipeline.json | python3 -c "import sys, json; data=json.load(sys.stdin); print(f\"\${data['summary']['total_value']:,.2f}\")")
+            WEIGHTED_VALUE=$(cat output/sales_pipeline.json | python3 -c "import sys, json; data=json.load(sys.stdin); print(f\"\${data['summary']['weighted_value']:,.2f}\")")
+            
+            echo "✅ **Status:** Success" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Metrics:**" >> $GITHUB_STEP_SUMMARY
+            echo "- Total Deals: $TOTAL_DEALS" >> $GITHUB_STEP_SUMMARY
+            echo "- Total Value: $TOTAL_VALUE" >> $GITHUB_STEP_SUMMARY
+            echo "- Weighted Value: $WEIGHTED_VALUE" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Status:** Failed" >> $GITHUB_STEP_SUMMARY
+          fi

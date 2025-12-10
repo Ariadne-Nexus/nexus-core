@@ -1,0 +1,9 @@
+deal_id,company,contact,stage,value,probability,expected_close_date,last_activity
+DEAL-001,Acme Corp,John Smith,Proposal,50000,60,2025-01-15,2025-12-05
+DEAL-002,TechStart Inc,Jane Doe,Negotiation,125000,80,2025-12-20,2025-12-09
+DEAL-003,Global Industries,Bob Johnson,Discovery,75000,30,2025-02-28,2025-12-01
+DEAL-004,StartupXYZ,Alice Wong,Proposal,35000,50,2025-01-31,2025-12-08
+DEAL-005,Enterprise Solutions Ltd,Charlie Brown,Closed Won,200000,100,2025-12-10,2025-12-10
+DEAL-006,Innovate LLC,David Lee,Discovery,45000,25,2025-03-15,2025-11-28
+DEAL-007,Digital Ventures,Emma Wilson,Negotiation,95000,75,2025-01-10,2025-12-09
+DEAL-008,CloudTech Partners,Frank Miller,Proposal,60000,55,2025-02-05,2025-12-07
