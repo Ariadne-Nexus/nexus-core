@@ -178,13 +178,16 @@ class SalesPipelineAutomation:
             with open(csv_path, 'r', encoding='utf-8') as f:
                 reader = csv.DictReader(f)
                 for row in reader:
+                    probability = int(row['probability'])
+                    if not 0 <= probability <= 100:
+                        raise ValueError(f"Probability must be 0-100, got {probability} in row: {row}")
                     deal = SalesDeal(
                         deal_id=row['deal_id'],
                         company=row['company'],
                         contact=row['contact'],
                         stage=row['stage'],
                         value=float(row['value']),
-                        probability=int(row['probability']),
+                        probability=probability,
                         expected_close_date=row['expected_close_date'],
                         last_activity=row['last_activity'],
                     )
