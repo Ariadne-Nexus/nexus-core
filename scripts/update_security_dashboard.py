@@ -214,7 +214,7 @@ def redact_secrets_health_column(dashboard_text: str) -> str:
                 continue
             parts = line.split("|")
             # parts: [ '', Q, completion, secrets, workflow, gov, grade, '' ]
-            if len(parts) < 7:
+            if len(parts) < 8:
                 res.append(line)
                 continue
             # Redact secrets health (index 3)
