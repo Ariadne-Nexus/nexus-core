@@ -200,7 +200,7 @@ def redact_secrets_health_column(dashboard_text: str) -> str:
     # Find table header to determine column positions
     header_idx = None
     for i, line in enumerate(lines):
-        if ("| Quarter" in line or "|----------" in line) and "|" in line:
+        if "| Quarter" in line and "|" in line:
             header_idx = i
             break
     if header_idx is not None:
