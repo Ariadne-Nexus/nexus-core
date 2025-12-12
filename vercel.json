@@ -1,9 +1,5 @@
 {
-  "framework": "nextjs",
-  "buildCommand": "npm run build",
-  "outputDirectory": ".next",
-  "github": {
-    "enabled": true,
-    "autoJobCancelation": true
-  }
+  "regions": ["iad1"],
+  "cleanUrls": true,
+  "trailingSlash": false
 }

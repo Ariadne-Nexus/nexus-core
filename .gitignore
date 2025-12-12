@@ -31,8 +31,27 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # env files (can opt-in for committing if needed)
-.env*
-!.env.example
+.env
+.env.local
+.env.*.local
+
+# python
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# automation outputs (keep samples)
+output/audit_*.json
+output/sales_cache/
+output/sales_pipeline.json
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
 
 # vercel
 .vercel

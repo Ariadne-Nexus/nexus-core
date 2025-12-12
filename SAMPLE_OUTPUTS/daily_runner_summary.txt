@@ -1,0 +1,19 @@
+Daily Runner — Generated Summary
+-------------------------------
+
+Date: 2025-11-27
+
+Top Highlights
+- Processed 3 notes from daily workflow
+- Identified automation opportunities in sales pipeline
+- Found bug in report export requiring immediate fix
+
+Action items
+1) Implement automated data pull for sales pipeline
+2) Fix daily report export script failing on edge cases
+3) Draft investor-ready bulleted summary for next meeting
+
+Logs / Metadata
+- runner-version: 2.0.0
+- demo_mode: True
+- notes_count: 3

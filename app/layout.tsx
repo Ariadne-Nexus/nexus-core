@@ -1,46 +1,38 @@
-import type { Metadata } from "next";
-import Script from "next/script";
 import "./globals.css";
-import NavBar from "@/components/nav-bar";
-import Footer from "@/components/footer";
-import { metadataBaseUrl, siteConfig, metadataDefaults, getSiteUrl } from "@/lib/site";
+import type { Metadata } from "next";
+import type React from "react";
+import { Geist, Geist_Mono } from "next/font/google";
 
-const siteUrl = getSiteUrl();
-const sharedTitle = `${siteConfig.name} — operations, telemetry, and controls`;
+const geistSans = Geist({
+  subsets: ["latin"],
+  variable: "--font-geist-sans",
+});
+
+const geistMono = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-geist-mono",
+});
 
 export const metadata: Metadata = {
-  title: sharedTitle,
-  description: siteConfig.description,
-  metadataBase: metadataBaseUrl(),
-  keywords: metadataDefaults.keywords,
+  metadataBase: new URL("https://www.ariadnenexus.com"),
+  title: "Ariadne Nexus",
+  description: "Built with a Python daily runner (daily_v2.py), OpenAI-powered summarization, GitHub issue automation, and a Next.js frontend deployed on Vercel at ariadnenexus.com.",
+  keywords: ["automation", "AI workflows", "GitHub integration", "OpenAI", "DevOps", "systems"],
+  authors: [{ name: "Ariadne Nexus" }],
   openGraph: {
-    title: sharedTitle,
-    description: siteConfig.description,
-    url: siteUrl,
-    siteName: siteConfig.name,
-    images: [
-      {
-        url: "/images/hero-visual.svg",
-        width: 1200,
-        height: 630,
-        alt: `${siteConfig.name} workspace illustration`,
-      },
-    ],
+    title: "Ariadne Nexus",
+    description: "Built with a Python daily runner (daily_v2.py), OpenAI-powered summarization, GitHub issue automation, and a Next.js frontend deployed on Vercel at ariadnenexus.com.",
+    url: "https://www.ariadnenexus.com",
+    siteName: "Ariadne Nexus",
+    type: "website",
+    locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    site: siteConfig.social?.twitterHandle || siteConfig.name,
-    title: sharedTitle,
-    description: siteConfig.description,
-    images: ["/images/hero-visual.svg"],
+    title: "Ariadne Nexus",
+    description: "Built with a Python daily runner (daily_v2.py), OpenAI-powered summarization, GitHub issue automation, and a Next.js frontend deployed on Vercel at ariadnenexus.com.",
   },
-  robots: {
-    index: true,
-    follow: true,
-  },
-  alternates: {
-    canonical: siteUrl,
-  },
+  robots: { index: true, follow: true },
 };
 
 export default function RootLayout({
@@ -50,35 +42,34 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        {/* Vercel Analytics - automatically enabled on Vercel */}
+        {/* Add Google Analytics or other analytics here if needed */}
+      </head>
       <body
-        className="antialiased bg-surface text-slate-900"
+        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
       >
-        {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ? (
-          <Script
-            src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID}`}
-            strategy="afterInteractive"
-          />
-        ) : null}
-        {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ? (
-          <Script id="ga-init" strategy="afterInteractive">
-            {`
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);} 
-              gtag('js', new Date());
-              gtag('config', '${process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID}');
-            `}
-          </Script>
-        ) : null}
-        <a className="skip-link" href="#main-content">
-          Skip to main content
-        </a>
-        <div className="min-h-screen bg-grid text-slate-900">
-          <NavBar />
-          <main id="main-content" className="mx-auto max-w-6xl px-6 pb-16 sm:px-8">
-            {children}
-          </main>
-          <Footer />
-        </div>
+        <div className="flex-1">{children}</div>
+        <footer className="border-t border-zinc-800 bg-black text-zinc-400 py-8 px-6 md:px-12 lg:px-24">
+          <div className="max-w-5xl mx-auto">
+            <section className="mb-6 text-sm space-y-2">
+              <h2 className="text-base font-semibold text-zinc-200">
+                Automation stack behind this site
+              </h2>
+              <p className="leading-relaxed">
+                Under the hood: a daily Python runner (<code className="text-zinc-300 bg-zinc-900 px-1 py-0.5 rounded">daily_v2.py</code>) ingests notes,
+                calls the OpenAI API to generate structured summaries, and can turn action items
+                into GitHub issues. This Next.js frontend, deployed on Vercel at
+                <span className="font-mono text-zinc-200"> ariadnenexus.com</span>, is the presentation layer
+                for that automation.
+              </p>
+            </section>
+            <p className="text-xs md:text-sm leading-relaxed pt-4 border-t border-zinc-900">
+              Built with a Python daily runner (<code className="text-zinc-300">daily_v2.py</code>), OpenAI-powered summarization, GitHub issue automation, and a Next.js frontend deployed on Vercel at{" "}
+              <span className="text-zinc-200 font-medium">ariadnenexus.com</span>.
+            </p>
+          </div>
+        </footer>
       </body>
     </html>
   );

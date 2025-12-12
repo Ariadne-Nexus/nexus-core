@@ -1,0 +1,2 @@
+mkdir -p ~/automation/dotlink-next-data
+cp ~/automation/output/daily_summary.json ~/automation/dotlink-next-data/daily_summary.json

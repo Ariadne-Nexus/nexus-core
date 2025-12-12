@@ -1,0 +1,96 @@
+name: Security Metrics Aggregator
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 1 * *"  # 1st of every month at 00:00 UTC
+
+permissions: {}
+
+jobs:
+  update-metrics:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - name: Setup Python
+        uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548  # v6.1.0
+        with:
+          python-version: '3.11'
+
+      - name: Generate dashboard summary
+        run: python scripts/update_security_dashboard.py
+
+      - name: Commit updated dashboard
+        run: |
+          git config --global user.name "Avidelta Security Bot"
+          git config --global user.email "security-bot@avidelta.io"
+          git add docs/security-audit-template.md
+
+          # Only commit if there are changes
+          if git diff --staged --quiet; then
+            echo "No changes to dashboard metrics"
+          else
+            git commit -m "chore: Auto-update security compliance dashboard [skip ci]"
+            git push
+          fi
+
+      - name: Generate job summary
+        if: always()
+        run: |
+          echo "## 📊 Security Metrics Update" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Date:** $(date -u '+%Y-%m-%d %H:%M UTC')" >> $GITHUB_STEP_SUMMARY
+          echo "**Repository:** ${{ github.repository }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ -f "/tmp/dashboard_metrics.txt" ]; then
+            cat /tmp/dashboard_metrics.txt >> $GITHUB_STEP_SUMMARY
+          else
+            echo "✅ Metrics aggregation completed" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Notify Slack (success)
+        if: success()
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        run: |
+          if [ -z "$SLACK_WEBHOOK" ]; then
+            echo "⚠️  SLACK_WEBHOOK not configured, skipping notification"
+            exit 0
+          fi
+          payload=$(cat <<EOF
+          {
+            "text": "✅ *${GITHUB_WORKFLOW}* succeeded in \`${GITHUB_REPOSITORY}\` on branch \`${GITHUB_REF_NAME}\` (commit \`${GITHUB_SHA::7}\`)."
+          }
+          EOF
+          )
+          curl -X POST -H 'Content-type: application/json' \
+            --data "$payload" \
+            "$SLACK_WEBHOOK"
+          echo "✓ Success notification sent to Slack"
+
+      - name: Notify Slack (failure)
+        if: failure()
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        run: |
+          if [ -z "$SLACK_WEBHOOK" ]; then
+            echo "⚠️  SLACK_WEBHOOK not configured, skipping notification"
+            exit 0
+          fi
+          payload=$(cat <<EOF
+          {
+            "text": "❌ *${GITHUB_WORKFLOW}* failed in \`${GITHUB_REPOSITORY}\` on branch \`${GITHUB_REF_NAME}\` (commit \`${GITHUB_SHA::7}\`).\nSee details: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          }
+          EOF
+          )
+          curl -X POST -H 'Content-type: application/json' \
+            --data "$payload" \
+            "$SLACK_WEBHOOK"
+          echo "✓ Failure notification sent to Slack"
