@@ -160,10 +160,6 @@ export async function GET(): Promise<NextResponse<DailySummaryResponse>> {
         status: "error",
         error: "Failed to load daily summary",
         message: err instanceof Error ? err.message : "Unknown error",
-codex/refactor-code-for-clarity-and-structure
-        status: "error",
-=======
-           main
       },
       { status: 500 }
     );
