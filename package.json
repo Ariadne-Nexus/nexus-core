@@ -6,8 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "check:runtime": "node scripts/check-edge-runtime.js",
+    "precommit": "npm run check:runtime"
   },
+  "type": "module",
   "dependencies": {
     "@supabase/supabase-js": "^2.87.1",
     "googleapis": "^168.0.0",
@@ -29,7 +32,7 @@
   }
   ,
   "engines": {
-    "node": ">=20 <21"
+    "node": "22.21.1"
   },
   "packageManager": "npm@10.x"
 }

@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-export const runtime = "edge";
 import appPkg from "../../../package.json" assert { type: "json" };
 import nextPkg from "next/package.json" assert { type: "json" };
 import type { PackageJson, StatusResponse } from "../types";
