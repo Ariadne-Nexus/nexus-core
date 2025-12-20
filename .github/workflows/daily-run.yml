@@ -61,17 +61,29 @@ jobs:
       - name: Verify output
         if: always()
         run: |
-          mkdir -p public/data
+          mkdir -p output/backups
+          # Normalize input (empty for scheduled runs)
+          DEMO_INPUT="${{ github.event.inputs.demo_mode }}"
           if [ -f output/daily_summary.json ]; then
-            cp output/daily_summary.json public/data/daily_summary.json
-            echo "✓ Copied daily_summary.json to public/data"
-            jq -r '.date, .metadata.runner_version' output/daily_summary.json || true
+            if [ "${DEMO_INPUT}" = "true" ]; then
+              # Demo runs: do not copy to public/data or commit. Save to backups
+              TIMESTAMP=$(date -u +"%Y%m%d_%H%M%S")
+              mkdir -p output/backups
+              cp output/daily_summary.json output/backups/daily_summary_demo_${TIMESTAMP}.json
+              echo "✓ Demo run: copied daily_summary.json to output/backups/daily_summary_demo_${TIMESTAMP}.json"
+              jq -r '.date, .metadata.runner_version' output/daily_summary.json || true
+            else
+              mkdir -p public/data
+              cp output/daily_summary.json public/data/daily_summary.json
+              echo "✓ Copied daily_summary.json to public/data/"
+              jq -r '.date, .metadata.runner_version' output/daily_summary.json || true
+            fi
           else
             echo "⚠️  output/daily_summary.json not found"
           fi
 
       - name: Commit and push results
-        if: success()
+        if: success() && (github.event.inputs.demo_mode != 'true')
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
