@@ -12,6 +12,11 @@ permissions:
 jobs:
   pre-commit:
     runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+      pull-requests: write
+      issues: write
 
     steps:
       - name: Checkout code

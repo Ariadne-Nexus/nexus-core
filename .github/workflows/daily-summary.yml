@@ -14,7 +14,10 @@ jobs:
   run-daily-and-sync:
     runs-on: ubuntu-latest
     permissions:
+      actions: write
       contents: write  # Required for git push
+      pull-requests: write
+      issues: write
 
     steps:
       - name: Checkout repository
