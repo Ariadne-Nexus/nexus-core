@@ -1,12 +1,22 @@
+<<<<<<< HEAD
 # Investor Meeting — Bulleted Summary
 **Prepared:** December 10, 2025  
 **Platform:** Avidelta (Ariadne Nexus)  
 **Meeting Type:** Progress Update & Roadmap Discussion
+=======
+# Investor Meeting Summary – December 2025
+
+**Prepared for:** Upcoming Investor Meeting  
+**Date:** December 10, 2025  
+**Platform:** Avidelta (Ariadne Nexus)  
+**Status:** Production-Ready, Revenue Opportunity
+>>>>>>> main
 
 ---
 
 ## Executive Summary (30-Second Pitch)
 
+<<<<<<< HEAD
 - **Production-ready AI automation platform** that transforms unstructured work notes into actionable intelligence
 - **87% time savings** — reduces daily synthesis from 30 minutes to under 5 seconds
 - **Live in production** at [ariadnenexus.com](https://www.ariadnenexus.com) with automated daily runs
@@ -140,30 +150,5 @@
 - **Clear roadmap** — incremental features, not moonshots
 - **Capital efficiency** — working system built pre-funding demonstrates execution
 
----
+*** End Patch
 
-## Demo Highlights
-
-### Live System
-- **Production URL:** [ariadnenexus.com](https://www.ariadnenexus.com)
-- **Status dashboard:** [ariadnenexus.com/api/status](https://www.ariadnenexus.com/api/status)
-- **Demo mode:** Run locally without API keys for instant validation
-
-### Key Workflows to Show
-1. Daily automation run → AI summary generation
-2. GitHub issue creation from action items
-3. Dashboard visualization of results
-4. Health monitoring and observability
-
----
-
-## Contact & Next Steps
-
-- **Technical deep dive** — schedule engineering walkthrough
-- **Pilot discussion** — explore early customer opportunities
-- **Due diligence materials** — GitHub repo, documentation, architecture review
-- **Follow-up meeting** — discuss terms, timeline, and milestones
-
----
-
-*This summary prepared by the Avidelta automation platform — the system that documents itself.*
