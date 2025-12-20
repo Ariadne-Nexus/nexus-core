@@ -445,7 +445,8 @@ class DailyAutomation:
                 })
                 logger.info(f"  Created issue #{issue.number}: {issue.title}")
             except ValueError as e:
-                logger.warning(f"  Skipping invalid action item: {e}")
+                logger.warning(f"Skipping invalid action item: {e}")
+                continue
             except RateLimitExceededException as e:
                 logger.error(
                     f"❌ GitHub rate limit reached while creating issue for: {item[:50]}..."
