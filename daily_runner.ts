@@ -17,7 +17,7 @@ export async function runSteps(steps: Step[], runId?: string) {
 
   try {
     for (const step of steps) {
-      const res = await runStep({ runId: id, name: step.name, fn: step.fn, allowFailure: !!step.allowFailure });
+      const res = await (runStep as unknown as any)({ runId: id, name: step.name, fn: step.fn, allowFailure: !!step.allowFailure });
       if (res.status === 'success') continue;
       anyStepFailed = true;
       if (res.status === 'failed') {
