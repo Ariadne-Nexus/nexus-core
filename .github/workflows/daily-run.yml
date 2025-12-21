@@ -81,6 +81,11 @@ jobs:
       - name: Commit and push results
         if: success() && (github.event.inputs.demo_mode != 'true')
         run: |
+          # If the generated summary indicates demo_mode=true, skip committing.
+          if [ -f output/daily_summary.json ] && [ "$(jq -r '.demo_mode // "true"' output/daily_summary.json 2>/dev/null)" = "true" ]; then
+            echo "Demo mode output; skipping commit."
+            exit 0
+          fi
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add public/data/daily_summary.json output/daily_summary.json || true
