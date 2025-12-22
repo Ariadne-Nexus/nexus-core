@@ -1,0 +1,84 @@
+{
+  "date": "2025-12-10",
+  "created_at": "2025-12-10T22:08:41.250280+00:00",
+  "summary": {
+    "total_deals": 5,
+    "total_value": 485000.0,
+    "weighted_value": 370000.0,
+    "avg_deal_size": 97000.0,
+    "deals_by_stage": {
+      "Proposal": 2,
+      "Negotiation": 1,
+      "Discovery": 1,
+      "Closed Won": 1
+    },
+    "value_by_stage": {
+      "Proposal": 85000.0,
+      "Negotiation": 125000.0,
+      "Discovery": 75000.0,
+      "Closed Won": 200000.0
+    }
+  },
+  "deals": [
+    {
+      "deal_id": "DEAL-001",
+      "company": "Acme Corp",
+      "contact": "John Smith",
+      "stage": "Proposal",
+      "value": 50000.0,
+      "probability": 60,
+      "expected_close_date": "2025-01-15",
+      "last_activity": "2025-12-05",
+      "weighted_value": 30000.0
+    },
+    {
+      "deal_id": "DEAL-002",
+      "company": "TechStart Inc",
+      "contact": "Jane Doe",
+      "stage": "Negotiation",
+      "value": 125000.0,
+      "probability": 80,
+      "expected_close_date": "2025-12-20",
+      "last_activity": "2025-12-09",
+      "weighted_value": 100000.0
+    },
+    {
+      "deal_id": "DEAL-003",
+      "company": "Global Industries",
+      "contact": "Bob Johnson",
+      "stage": "Discovery",
+      "value": 75000.0,
+      "probability": 30,
+      "expected_close_date": "2025-02-28",
+      "last_activity": "2025-12-01",
+      "weighted_value": 22500.0
+    },
+    {
+      "deal_id": "DEAL-004",
+      "company": "StartupXYZ",
+      "contact": "Alice Wong",
+      "stage": "Proposal",
+      "value": 35000.0,
+      "probability": 50,
+      "expected_close_date": "2025-01-31",
+      "last_activity": "2025-12-08",
+      "weighted_value": 17500.0
+    },
+    {
+      "deal_id": "DEAL-005",
+      "company": "Enterprise Solutions Ltd",
+      "contact": "Charlie Brown",
+      "stage": "Closed Won",
+      "value": 200000.0,
+      "probability": 100,
+      "expected_close_date": "2025-12-10",
+      "last_activity": "2025-12-10",
+      "weighted_value": 200000.0
+    }
+  ],
+  "metadata": {
+    "pipeline_version": "1.0.0",
+    "demo_mode": true,
+    "data_source": "demo"
+  }
+}

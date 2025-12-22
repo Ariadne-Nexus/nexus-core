@@ -1,6 +1,6 @@
-# 🛡️ Avidelta Security & Secrets Compliance Checklist
+# 🛡️ nexus-core Security & Secrets Compliance Checklist
 
-**Repository:** dotlink-ops/Avidelta  
+**Repository:** dotlink-ops/nexus-core  
 **Maintainer:** @kamarfoster  
 **Last Verified:** 2025-11-29
 
@@ -58,7 +58,7 @@
 2. **Update GitHub Secrets**
    ```bash
    # Repository-level secret
-   gh secret set OPENAI_API_KEY --repo dotlink-ops/Avidelta --body "$NEW_KEY"
+   gh secret set OPENAI_API_KEY --repo dotlink-ops/nexus-core --body "$NEW_KEY"
 
    # Environment-specific secrets (staging/production)
    # Via UI: Settings → Environments → [env] → Update secret
@@ -148,7 +148,7 @@ If a secret is compromised:
 - ✅ Multi-environment matrix (repository, staging, production)
 - ✅ Pinned actions to commit SHAs
 - ✅ Least-privilege permissions: `{}`
-- ✅ Slack notifications on failure
+- ✅ Slack notifications on success and failure
 - ✅ Enhanced job summaries with rotation dates
 - ✅ Cron jitter (12:07 UTC) to avoid thundering herd
 
@@ -168,10 +168,31 @@ If a secret is compromised:
 - ✅ Pinned actions to commit SHAs
 - ✅ Explicit permissions: `{ contents: write }`
 - ✅ Pre-flight secret validation
-- ✅ Slack notifications on failure
+- ✅ Slack notifications on success and failure
 - ✅ Fail-fast error handling
 
 **Schedule:** Daily at 13:00 UTC (5:00 AM PT / 8:00 AM ET)
+
+**Required Secrets:**
+- `OPENAI_API_KEY`
+- `GITHUB_TOKEN` (auto-provided)
+- `SLACK_WEBHOOK` (optional)
+
+---
+
+### daily-run.yml
+
+**Purpose:** Daily automation run using run-daily.sh wrapper script
+
+**Security Features:**
+- ✅ Pinned actions to commit SHAs
+- ✅ Explicit permissions: `{ contents: write }`
+- ✅ Pre-flight secret validation
+- ✅ Slack notifications on success and failure
+- ✅ Job summary with detailed output information
+- ✅ Uses existing scripts layout (run-daily.sh → daily_v2.py)
+
+**Schedule:** Daily at 14:00 UTC (6:00 AM PT / 9:00 AM ET)
 
 **Required Secrets:**
 - `OPENAI_API_KEY`
@@ -188,7 +209,7 @@ If a secret is compromised:
 - ✅ Pinned actions to commit SHAs
 - ✅ Explicit permissions: `{ contents: read }`
 - ✅ Secret availability checks
-- ✅ Slack notifications on failure
+- ✅ Slack notifications on success and failure
 - ✅ Demo mode testing (no API calls)
 
 **Trigger:** Every push to repository, manual dispatch
@@ -263,10 +284,10 @@ gh run list --limit 10
 gh run list --workflow=secret-health.yml --limit 5
 
 # List configured secrets (names only, not values)
-gh secret list --repo dotlink-ops/Avidelta
+gh secret list --repo dotlink-ops/nexus-core
 
 # View branch protection rules
-gh api repos/dotlink-ops/Avidelta/branches/main/protection | jq
+gh api repos/dotlink-ops/nexus-core/branches/main/protection | jq
 
 # Check CODEOWNERS syntax
 cat .github/CODEOWNERS
@@ -281,12 +302,12 @@ gh workflow run secret-health.yml
 gh run view --log
 
 # Check for security advisories
-gh api repos/dotlink-ops/Avidelta/vulnerability-alerts
+gh api repos/dotlink-ops/nexus-core/vulnerability-alerts
 ```
 
 ---
 
-**Maintained by:** Avidelta Infrastructure & Automation Team  
+**Maintained by:** nexus-core Infrastructure & Automation Team  
 **Document Version:** 1.0  
 **Last Updated:** 2025-11-29  
 **Next Review:** 2025-12-29

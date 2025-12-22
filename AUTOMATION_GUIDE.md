@@ -18,14 +18,16 @@
 This repository contains a production-ready automation stack that combines:
 
 1. **Python Automation Scripts** - Daily runner that processes notes, generates summaries using OpenAI, and creates GitHub issues
-2. **Next.js Portfolio App** - Modern web application showcasing the automation results
-3. **Sync & Integration Scripts** - Glue code that connects the automation outputs to the frontend
+2. **Sales Pipeline Automation** - Automated data pull from CRM/CSV sources for sales tracking and analysis
+3. **Next.js Portfolio App** - Modern web application showcasing the automation results
+4. **Sync & Integration Scripts** - Glue code that connects the automation outputs to the frontend
 
 ### Key Features
 
 ✅ **One-Command Automation** - `./run-daily.sh` runs the entire workflow  
 ✅ **AI-Powered Summaries** - OpenAI integration for intelligent note processing  
 ✅ **GitHub Issue Creation** - Automatic issue creation and labeling  
+✅ **Sales Pipeline Tracking** - Automated data pull and analysis from CSV/API sources  
 ✅ **Clean Architecture** - Separation of concerns with clear data flow  
 ✅ **Production Ready** - Error handling, logging, validation, and monitoring  
 ✅ **Demo Mode** - Run without API keys for testing and development
@@ -60,11 +62,17 @@ cp .env.example .env.local
 ### 3. Run the Automation
 
 ```bash
-# Run in demo mode (no API calls)
+# Run daily notes automation in demo mode (no API calls)
 ./run-daily.sh --demo
 
-# Run with real API calls (requires configured keys)
+# Run daily notes automation with real API calls (requires configured keys)
 ./run-daily.sh
+
+# Run sales pipeline data pull in demo mode
+python3 scripts/sales_pipeline_pull.py --demo
+
+# Run sales pipeline with CSV data source
+SALES_DATA_SOURCE=./output/sample_sales_data.csv SALES_DATA_TYPE=csv python3 scripts/sales_pipeline_pull.py
 ```
 
 ### 4. Start the Next.js App
@@ -274,6 +282,51 @@ EOF
 # Run automation
 ./run-daily.sh
 ```
+
+### Sales Pipeline Automation
+
+The sales pipeline automation pulls data from CSV files or API sources and generates structured analytics.
+
+**Demo Mode:**
+```bash
+# Run with sample data (no configuration needed)
+python3 scripts/sales_pipeline_pull.py --demo
+```
+
+**CSV Mode:**
+```bash
+# Set up your sales data CSV file
+# Format: deal_id,company,contact,stage,value,probability,expected_close_date,last_activity
+
+# Run with CSV data source
+export SALES_DATA_SOURCE=./output/sample_sales_data.csv
+export SALES_DATA_TYPE=csv
+python3 scripts/sales_pipeline_pull.py
+```
+
+**Output Files:**
+- `output/sales_pipeline.json` - Latest sales pipeline data and analysis
+- `output/sales_pipeline_audit_*.json` - Timestamped audit logs
+
+**What it does:**
+1. Pulls sales deals from configured source (CSV or demo data)
+2. Analyzes pipeline metrics (total value, weighted value, deals by stage)
+3. Generates structured JSON output for reporting
+4. Creates audit logs for compliance
+
+**CSV Format:**
+```csv
+deal_id,company,contact,stage,value,probability,expected_close_date,last_activity
+DEAL-001,Acme Corp,John Smith,Proposal,50000,60,2025-01-15,2025-12-05
+DEAL-002,TechStart Inc,Jane Doe,Negotiation,125000,80,2025-12-20,2025-12-09
+```
+
+**Typical Stages:**
+- Discovery - Initial contact and qualification
+- Proposal - Proposal submitted to prospect
+- Negotiation - In active negotiation
+- Closed Won - Deal won and closed
+- Closed Lost - Deal lost
 
 ### Accessing the Frontend
 
