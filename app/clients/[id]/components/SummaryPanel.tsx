@@ -6,13 +6,13 @@ import { supabaseClient } from "@/lib/supabaseClient";
 export default function SummaryPanel({ clientId }: { clientId: string }) {
   const [summary, setSummary] = useState<any>(null);
 
-  async function loadSummary() {
-    const res = await fetch(`/api/clients/${clientId}/summary`);
-    const data = await res.json();
-    setSummary(data);
-  }
-
   useEffect(() => {
+    async function loadSummary() {
+      const res = await fetch(`/api/clients/${clientId}/summary`);
+      const data = await res.json();
+      setSummary(data);
+    }
+
     (async () => {
       await loadSummary();
     })();

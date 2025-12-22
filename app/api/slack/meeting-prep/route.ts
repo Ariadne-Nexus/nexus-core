@@ -11,8 +11,7 @@ export async function POST() {
     const scheduleRes = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/schedule/weekly`);
     const schedule = await scheduleRes.json();
 
-    const forecastRes = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/intel/forecast`);
-    const forecast = await forecastRes.json();
+    // Forecast removed: not used in message build (kept fetchs minimal)
 
     const items = meetings.events || [];
 

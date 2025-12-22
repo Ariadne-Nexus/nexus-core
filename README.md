@@ -1,6 +1,6 @@
-# Ariadne Nexus
+# nexus-core Automation + Portfolio Stack
 
-> **Transform daily notes into structured summaries and GitHub issues using AI**
+![Daily run status](https://github.com/dotlink-ops/nexus-core/actions/workflows/daily-run.yml/badge.svg)
 
 Ariadne Nexus (or just "Nexus") is a full-stack automation system that combines a **Python automation engine** with a **Next.js frontend**. It ingests daily notes, generates AI-powered summaries, creates GitHub issues automatically, and serves results through a modern dashboard.
 
@@ -8,9 +8,9 @@ Ariadne Nexus (or just "Nexus") is a full-stack automation system that combines 
 
 ---
 
-## What is Nexus?
+## 🏗️ What is nexus-core?
 
-Nexus automates the daily workflow of turning unstructured notes into actionable outputs:
+**nexus-core** (branded as **Ariadne Nexus** for clients) is a **production automation platform** that demonstrates how to build AI-powered workflows for real-world business operations. It combines:
 
 1. **Note Ingestion** — Reads markdown/text files from `output/notes/`
 2. **AI Summarization** — Uses OpenAI GPT-4 to extract highlights, action items, and assessments
@@ -20,7 +20,70 @@ Nexus automates the daily workflow of turning unstructured notes into actionable
 
 ---
 
-## Run Locally
+## 🎯 One-Line Pitch
+
+A full-stack automation system that ingests daily notes, generates AI summaries, creates GitHub issues automatically, and serves results through a modern Next.js dashboard—showcasing production-grade Python automation and frontend integration.
+
+---
+
+## 🎨 Design
+
+UI is sourced from our Figma file (design system + page layouts).  
+See `design/README.md` for the canonical Figma link and guidelines.
+
+---
+
+## 💼 What This Project Demonstrates
+
+## Runtime Rule
+
+All API routes run on Node by default.
+
+Edge runtime is opt-in, must be listed in `runtime-policy.json`, and must not use Node APIs.
+
+This keeps humans and machines aligned.
+
+
+- A one-command **daily runner** (Python) that:
+  - Activates a virtual environment
+  - Pulls unstructured notes from a local directory (markdown/text)
+  - Uses the OpenAI API to generate clean, structured daily summaries
+  - Can create labeled GitHub issues from action items
+  - Supports `--demo` and `--dry-run` for safe testing
+
+- A **Next.js portfolio frontend** that:
+  - Presents the automation system as a client- and investor-ready product
+  - Uses the App Router and is deployable to Vercel
+  - Builds cleanly with `npm run build`
+  - Can be extended to surface automation outputs as a live dashboard
+
+The repo is also designed to be **AI-friendly**. A dedicated config file,
+`codex-assistant.mjs`, tells Copilot/LLM agents how to safely debug, refactor,
+and extend the codebase.
+
+---
+
+## 📋 Table of Contents
+
+- [What This Project Demonstrates](#-what-this-project-demonstrates)
+- [What This Does](#-what-this-does)
+- [Why It Matters](#-why-it-matters)
+- [Tech Stack](#-tech-stack)
+- [Quick Start](#-quick-start)
+- [Command Reference](#-command-reference)
+- [Architecture](#-architecture)
+- [How to Use This Project](#-how-to-use-this-project)
+  - [Running the Daily Automation](#running-the-daily-automation)
+  - [Running the Next.js Portfolio](#running-the-nextjs-portfolio)
+- [Testing and Validation](#-testing-and-validation)
+- [API Endpoints](#-api-endpoints)
+- [Configuration](#-configuration)
+- [Deployment](#-deployment)
+- [Portfolio Notes](#-portfolio-notes)
+
+---
+
+## 🚀 How to Run Locally
 
 ### Prerequisites
 
@@ -30,10 +93,9 @@ Nexus automates the daily workflow of turning unstructured notes into actionable
 ### Quick Start
 
 ```bash
-# Clone and setup
-git clone https://github.com/dotlink-ops/Avidelta.git
-cd Avidelta
-./setup.sh
+# 1. Clone the repository
+git clone https://github.com/dotlink-ops/nexus-core.git
+cd nexus-core
 
 # Run automation in demo mode (no API keys needed)
 python3 scripts/daily_v2.py --demo
@@ -167,8 +229,8 @@ cat output/sales_pipeline.json | jq
 
 ```bash
 # Clone repository
-git clone https://github.com/dotlink-ops/Avidelta.git
-cd Avidelta
+git clone https://github.com/dotlink-ops/nexus-core.git
+cd nexus-core
 
 # Install Python dependencies
 python3 -m venv .venv
@@ -360,7 +422,7 @@ bash scripts/validate.sh            # Full test suite
 
 ### 🤖 AI Assistant Integration
 
-This repository includes **Avidelta Repo Copilot** configuration:
+This repository includes **nexus-core Repo Copilot** configuration:
 
 - **Live Demo**: https://www.ariadnenexus.com
 - **GitHub**: https://github.com/dotlink-ops/Avidelta

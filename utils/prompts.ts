@@ -256,7 +256,9 @@ Weekly Schedule Framework:
  * Next Actions Generation Prompt
  * Used by /api/actions/generate
  */
-export function buildNextActionsPrompt(data: NextActionsPromptData): string {
+export function buildNextActionsPrompt(_data: NextActionsPromptData): string {
+  // Mark parameter as used to avoid lint warnings when callers pass data
+  void _data;
   return `
 You are Nexus, an elite executive operator. 
 Generate specific, high-leverage next actions for each client based on:

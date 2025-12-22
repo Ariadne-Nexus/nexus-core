@@ -1,33 +1,42 @@
-# Architecture
+# nexus-core Architecture
 
-Ariadne Nexus is a full-stack automation system that transforms daily notes into structured summaries and GitHub issues using AI.
+This document provides a high-level overview of the nexus-core system architecture, showing how notes flow through the automation pipeline to the frontend dashboard.
 
 ## High-Level Diagram
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                         Ariadne Nexus                               │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│  ┌──────────────┐     ┌──────────────┐     ┌──────────────────┐    │
-│  │    Notes     │     │  daily_v2.py │     │  Output JSON     │    │
-│  │  (Markdown)  │ ──▶ │  (Python)    │ ──▶ │  daily_summary   │    │
-│  │              │     │              │     │                  │    │
-│  └──────────────┘     └──────┬───────┘     └────────┬─────────┘    │
-│                              │                      │               │
-│                              ▼                      ▼               │
-│                     ┌──────────────┐       ┌──────────────────┐    │
-│                     │  OpenAI API  │       │   Next.js App    │    │
-│                     │  (GPT-4)     │       │   /api routes    │    │
-│                     └──────────────┘       └────────┬─────────┘    │
-│                              │                      │               │
-│                              ▼                      ▼               │
-│                     ┌──────────────┐       ┌──────────────────┐    │
-│                     │  GitHub API  │       │  Vercel Deploy   │    │
-│                     │  (Issues)    │       │  ariadnenexus.com│    │
-│                     └──────────────┘       └──────────────────┘    │
-│                                                                     │
-└─────────────────────────────────────────────────────────────────────┘
+## System Overview
+
+nexus-core is a **full-stack automation platform** with three main layers:
+
+1. **Automation Engine** (Python) - Ingests notes, generates summaries with AI, creates GitHub issues
+2. **API Layer** (Next.js API Routes) - Exposes automation status, summaries, and metrics
+3. **Frontend Dashboard** (Next.js App Router) - Displays live automation status, workflow history, and results
+
+---
+
+## Data Flow Diagram
+
+```mermaid
+graph TD
+    A[📝 Daily Notes<br/>output/notes/] --> B[🐍 daily_v2.py<br/>Python Automation Engine]
+    B --> C[🤖 OpenAI GPT-4 Turbo<br/>AI Summarization]
+    C --> D[💾 JSON Output<br/>output/daily_summary.json]
+    D --> E[📋 GitHub Issues<br/>Auto-created from action items]
+    D --> F[📊 Audit Logs<br/>output/audit_*.json]
+    
+    G[⏰ GitHub Actions<br/>Daily 5 AM PT] --> B
+    G --> H[📦 Workflow Artifacts<br/>Uploaded to Actions]
+    
+    I[🌐 Next.js API<br/>/api/automation-status] --> J[📊 GitHub Actions API<br/>Fetch workflow runs]
+    J --> K[🖥️ Frontend Dashboard<br/>Live status + history]
+    
+    D --> I
+    F --> I
+    
+    style B fill:#0ea5e9
+    style C fill:#8b5cf6
+    style I fill:#10b981
+    style K fill:#f59e0b
 ```
 
 ## Component Overview

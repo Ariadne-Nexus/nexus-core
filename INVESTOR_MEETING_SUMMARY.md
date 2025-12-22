@@ -8,7 +8,7 @@
 
 **Prepared for:** Upcoming Investor Meeting  
 **Date:** December 10, 2025  
-**Platform:** Avidelta (Ariadne Nexus)  
+**Platform:** nexus-core (Ariadne Nexus)  
 **Status:** Production-Ready, Revenue Opportunity
 >>>>>>> main
 
@@ -16,11 +16,7 @@
 
 ## Executive Summary (30-Second Pitch)
 
-<<<<<<< HEAD
-- **Production-ready AI automation platform** that transforms unstructured work notes into actionable intelligence
-- **87% time savings** — reduces daily synthesis from 30 minutes to under 5 seconds
-- **Live in production** at [ariadnenexus.com](https://www.ariadnenexus.com) with automated daily runs
-- **Proven architecture** — OpenAI GPT-4 integration, GitHub automation, Next.js 16 dashboard
+nexus-core is a **live, production AI automation platform** that eliminates manual workflow overhead by transforming unstructured notes into actionable intelligence. Built on OpenAI GPT-4 and deployed at **ariadnenexus.com**, the system reduces daily synthesis work by **87%** (30 minutes → 5 seconds) while creating an audit trail for compliance and investor transparency.
 
 ---
 
@@ -57,20 +53,14 @@
 
 ## Business Value Proposition
 
-### Problem We Solve
-- **Manual synthesis bottleneck** — professionals spend 15-30 min/day organizing notes and creating tasks
-- **Context switching** — moving between note-taking, task creation, and status updates breaks flow
-- **Lost insights** — valuable ideas and action items buried in unstructured text
-
-### Our Solution
-- **Automated intelligence** — AI reads daily notes and extracts structured insights automatically
-- **Seamless integration** — works with existing workflows (GitHub, local notes, future: Notion, Slack)
-- **Audit trail** — every action timestamped and logged for compliance and review
-
-### Immediate ROI
-- **Time savings:** 15-30 minutes per user per day = 5-10 hours per month
-- **Better execution:** Nothing falls through cracks, all action items tracked
-- **Team alignment:** Automatic summaries keep stakeholders informed
+| **Factor** | **nexus-core** | **Competitors** |
+|-----------|-------------|----------------|
+| **Production Status** | ✅ Live, revenue-ready | ❌ Mostly prototypes |
+| **AI Integration** | ✅ Native GPT-4 built-in | ⚠️ Add-on or manual |
+| **Zero Setup Demo** | ✅ Demo mode included | ❌ Requires API keys |
+| **Full-Stack Solution** | ✅ Backend + Frontend | ⚠️ Backend only |
+| **Audit Compliance** | ✅ Built-in timestamps | ❌ Must add separately |
+| **Open Architecture** | ✅ Extensible design | ⚠️ Vendor lock-in |
 
 ---
 
@@ -152,3 +142,21 @@
 
 *** End Patch
 
+---
+
+## Appendix: Quick Links
+
+- **Live Demo:** [ariadnenexus.com](https://www.ariadnenexus.com)
+- **GitHub Repository:** [github.com/dotlink-ops/nexus-core](https://github.com/dotlink-ops/nexus-core)
+- **API Status:** [ariadnenexus.com/api/status](https://www.ariadnenexus.com/api/status)
+- **Technical Docs:** See README.md, ARCHITECTURE.md, AUTOMATION_GUIDE.md in repo
+
+---
+
+**Prepared by:** nexus-core Team  
+**Contact:** Via GitHub or direct message  
+**Last Updated:** December 10, 2025
+
+---
+
+*This platform builds itself. Let's show you how it can build your business.*

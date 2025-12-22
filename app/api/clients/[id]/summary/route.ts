@@ -11,7 +11,8 @@ export async function GET(
   _request: NextRequest,
   context: { params: Promise<{ id: string }> }
 ): Promise<NextResponse<DailySummaryResponse>> {
-  const { id } = await context.params;
+  // params are available if needed; not required for this handler
+  await context.params;
 
   try {
     const publicPath = path.join(process.cwd(), "public", "data", "daily_summary.json");

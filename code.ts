@@ -58,7 +58,7 @@ figma.ui.onmessage = async (msg) => {
   // =============================================================
   figma.notify("Fetching GitHub metadata…");
 
-  const avidelta = await githubRepoTree("dotlink-ops", "Avidelta");
+  const avidelta = await githubRepoTree("dotlink-ops", "nexus-core");
   const nextjs   = await githubRepoTree("dotlink-ops", "nextjs");
 
   const avideltaFiles = avidelta.tree.map(t => t.path);
@@ -120,7 +120,7 @@ figma.ui.onmessage = async (msg) => {
     frame.appendChild(group);
   }
 
-  addFileListToFrame(engine, "Avidelta Repo Structure", avideltaFiles);
+  addFileListToFrame(engine, "nexus-core Repo Structure", avideltaFiles);
   addFileListToFrame(api, "Next.js API Routes", nextFiles.filter(f => f.startsWith("app/api")));
 
   // =============================================================
@@ -146,12 +146,12 @@ figma.ui.onmessage = async (msg) => {
   // 6. BUILD SLIDE DECK
   // =============================================================
 
-  const intro = await createSlide("Ariadne Nexus — System Blueprint");
-  const s2    = await createSlide("Architecture Overview", 1200);
-  const s3    = await createSlide("Vision & Spatial Intelligence", 2400);
-  const s4    = await createSlide("Automation Engine (Python)", 3600);
-  const s5    = await createSlide("Integrations & Signals", 4800);
-  const s6    = await createSlide("Powered by Ariadne Nexus", 6000);
+  await createSlide("Ariadne Nexus — System Blueprint");
+  await createSlide("Architecture Overview", 1200);
+  await createSlide("Vision & Spatial Intelligence", 2400);
+  await createSlide("Automation Engine (Python)", 3600);
+  await createSlide("Integrations & Signals", 4800);
+  await createSlide("Powered by Ariadne Nexus", 6000);
 
   figma.notify("Ariadne Nexus — V2 Blueprint Generated ✔");
 };

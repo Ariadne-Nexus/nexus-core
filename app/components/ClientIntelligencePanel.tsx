@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { createClient } from "@supabase/supabase-js";
 
 // Types
@@ -56,10 +56,12 @@ export default function ClientIntelligencePanel({ clientId }: ClientIntelligence
   const [loading, setLoading] = useState(true);
   const [searching, setSearching] = useState(false);
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+  const supabase = useMemo(() =>
+    createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    ),
+  []);
 
   // Load client data
   useEffect(() => {
@@ -98,7 +100,7 @@ export default function ClientIntelligencePanel({ clientId }: ClientIntelligence
     }
 
     loadClientData();
-  }, [clientId]);
+  }, [clientId, supabase]);
 
   // Handle search
   async function handleSearch() {

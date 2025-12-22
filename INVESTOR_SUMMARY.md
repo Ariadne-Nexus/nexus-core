@@ -1,15 +1,14 @@
-# Avidelta — Investor-Ready Summary
+# nexus-core — Investor Summary
 
 **Prepared for:** Investor Meeting  
-**Date:** December 10, 2025  
-**Platform:** Avidelta (branded as Ariadne Nexus)  
-**Live Demo:** https://www.ariadnenexus.com
+**Date:** December 2025  
+**Platform:** nexus-core (branded as Ariadne Nexus)
 
 ---
 
 ## 🎯 One-Line Pitch
 
-**AI-powered automation platform that transforms daily work notes into actionable intelligence—reducing manual synthesis from 30 minutes to 5 seconds while creating structured outputs, tracked tasks, and compliance-ready audit trails.**
+nexus-core is a **production-ready AI automation platform** that transforms unstructured daily work notes into actionable intelligence. The system ingests notes, generates structured summaries using OpenAI GPT-4 Turbo, and automatically creates tracked GitHub issues—reducing manual synthesis time by **87%** (from 30 minutes to under 5 seconds daily).
 
 ---
 
@@ -232,47 +231,10 @@ Avidelta is a **production-ready AI automation platform** solving a critical wor
 
 ## 👥 Team
 
-**Founder/Engineer** — Full-stack automation engineer with expertise in:
-- Python automation and AI/ML integration
-- Next.js/React production deployments
-- DevOps and CI/CD pipeline design
-- Security and compliance frameworks
-
-**Track Record:**
-- Built and deployed production automation systems
-- Integrated OpenAI, GitHub, and cloud services at scale
-- Designed for investor/client-ready demonstrations
-- Strong documentation and handoff practices
+- **Live Demo:** [ariadnenexus.com](https://www.ariadnenexus.com)
+- **Repository:** [github.com/dotlink-ops/nexus-core](https://github.com/dotlink-ops/nexus-core)
+- **Status Dashboard:** [ariadnenexus.com/api/status](https://www.ariadnenexus.com/api/status)
 
 ---
 
-## 📞 Next Steps
-
-### For This Meeting
-1. ✅ Review live demo at ariadnenexus.com
-2. ✅ Discuss market fit and customer acquisition strategy
-3. ✅ Explore technical roadmap and differentiation
-4. ✅ Address questions about scaling and unit economics
-
-### Follow-Up
-- Share detailed financial projections
-- Provide customer discovery interview results
-- Schedule technical deep-dive if needed
-- Introduce to potential pilot customers
-
----
-
-## 📎 Appendix: Quick Links
-
-- **Live Demo:** https://www.ariadnenexus.com
-- **API Status:** https://www.ariadnenexus.com/api/status
-- **Daily Summary API:** https://www.ariadnenexus.com/api/daily-summary
-- **GitHub Repository:** https://github.com/dotlink-ops/Avidelta
-- **Documentation:** See README.md, ARCHITECTURE.md, CASE_STUDY.md
-
----
-
-**Last Updated:** December 10, 2025  
-**Contact:** Via GitHub Issues or direct message
-
-*This summary is generated from Avidelta's production automation platform—demonstrating the system's capability to create structured, stakeholder-ready outputs from unstructured inputs.*
+*Generated from nexus-core automation platform — the system that builds itself.*

@@ -28,7 +28,58 @@ import logging
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Callable, TypeVar, Tuple, TypedDict
+
+T = TypeVar("T")
+
+def run_step(
+    *,
+    run_id: str,
+    stage: str,
+    step: str,
+    fn: Callable[[], T],
+    allow_failure: bool = True,
+) -> Tuple[bool, Optional[T]]:
+    """
+    Execute a single automation step with structured logging and failure isolation.
+    """
+    logger.info(
+        "STEP_START",
+        extra={"run_id": run_id, "stage": stage, "step": step}
+    )
+
+    try:
+        result = fn()
+        logger.info(
+            "STEP_SUCCESS",
+            extra={"run_id": run_id, "stage": stage, "step": step}
+        )
+        return True, result
+
+    except Exception as e:
+        logger.error(
+            "STEP_FAILURE",
+            extra={
+                "run_id": run_id,
+                "stage": stage,
+                "step": step,
+                "error": str(e),
+            },
+            exc_info=True,
+        )
+
+        if not allow_failure:
+            raise
+
+        return False, None
+
+
+    class RunStepRecord(TypedDict, total=False):
+        stage: str
+        step: str
+        status: str
+        error: str
+
 
 # Import sales pipeline module
 try:
@@ -41,29 +92,19 @@ except ImportError:
 
 def configure_logging() -> logging.Logger:
     """Configure structured logging with env-driven levels and run identifiers."""
-    run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    # Simpler logging for demo/test runs: do not pre-populate `run_id` on the
+    # LogRecord to avoid conflicts when callers pass `extra={'run_id': ...}`.
     level_name = os.getenv("LOG_LEVEL", "INFO").upper()
     level = getattr(logging, level_name, logging.INFO)
 
-    # Ensure every log record gets the run_id field
-    old_factory = logging.getLogRecordFactory()
-
-    def record_factory(*args, **kwargs):
-        record = old_factory(*args, **kwargs)
-        if not hasattr(record, "run_id"):
-            record.run_id = run_id
-        return record
-
-    logging.setLogRecordFactory(record_factory)
-
     logging.basicConfig(
         level=level,
-        format="%(asctime)s [%(levelname)s] [run_id=%(run_id)s] %(name)s: %(message)s",
+        format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
         datefmt="%Y-%m-%dT%H:%M:%S%z",
     )
 
     logger = logging.getLogger(__name__)
-    logger.debug("Logging configured", extra={"run_id": run_id})
+    logger.debug("Logging configured")
     return logger
 
 
@@ -134,6 +175,15 @@ class AutomationConfig:
             missing.append("REPO_NAME (format: owner/repo)")
 
         return missing
+
+
+# Ensure RunStepRecord is available before the DailyAutomation class definition
+class RunStepRecord(TypedDict, total=False):
+    stage: str
+    step: str
+    status: str
+    error: str
+
 
 
 class DailyAutomation:
@@ -652,6 +702,37 @@ class DailyAutomation:
         logger.info("✓ Output saved successfully")
         return output_file
 
+    def _write_run_summary(
+        self,
+        *,
+        run_id: str,
+        started_at: datetime,
+        ended_at: datetime,
+        status: str,
+        steps: List[RunStepRecord],
+        artifacts: Dict[str, str],
+    ) -> Path:
+        """Persist a run-level summary (run.json) for inspection and auditing."""
+        run_summary = {
+            "run_id": run_id,
+            "started_at": started_at.isoformat(),
+            "ended_at": ended_at.isoformat(),
+            "duration_sec": round((ended_at - started_at).total_seconds(), 2),
+            "status": status,
+            "demo_mode": self.demo_mode,
+            "steps": steps,
+            "artifacts": artifacts,
+        }
+
+        run_file = self.output_dir / "run.json"
+        run_file.write_text(
+            json.dumps(run_summary, indent=2, ensure_ascii=False),
+            encoding="utf-8",
+        )
+
+        logger.info(f"📄 Saved run summary: {run_file}")
+        return run_file
+
     def run(self) -> int:
         """Execute the daily automation workflow from start to finish.
 
@@ -670,36 +751,188 @@ class DailyAutomation:
             - Creates GitHub issues (when not in demo).
             - Saves output JSON files to the ``output/`` directory.
         """
-        start_time = datetime.now(timezone.utc)
+        run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S")
+        started_at = datetime.now(timezone.utc)
+
+        logger.info(
+            "RUN_START",
+            extra={"run_id": run_id, "demo_mode": self.demo_mode}
+        )
+
+        overall_failed = False
+        steps: List[RunStepRecord] = []
+        artifacts: Dict[str, str] = {}
 
         try:
-            self._log_run_header()
+            # ── INGEST ─────────────────────────────────────────────
+            try:
+                ok, notes = run_step(
+                    run_id=run_id,
+                    stage="ingest",
+                    step="load-notes",
+                    fn=self.ingest_notes,
+                    allow_failure=False,   # ingest is mandatory
+                )
+                steps.append({"stage": "ingest", "step": "load-notes", "status": "success" if ok else "failure"})
+            except Exception as e:
+                steps.append({"stage": "ingest", "step": "load-notes", "status": "failure", "error": str(e)})
+                ended_at = datetime.now(timezone.utc)
+                try:
+                    self._write_run_summary(
+                        run_id=run_id,
+                        started_at=started_at,
+                        ended_at=ended_at,
+                        status="failed",
+                        steps=steps,
+                        artifacts=artifacts,
+                    )
+                except Exception:
+                    logger.debug("Failed to persist run summary after ingest failure", exc_info=True)
+                raise
 
-            notes = self.ingest_notes()
             if not notes:
-                logger.warning("No notes found, exiting")
+                logger.warning(
+                    "No notes found; exiting early",
+                    extra={"run_id": run_id}
+                )
+                ended_at = datetime.now(timezone.utc)
+                self._write_run_summary(
+                    run_id=run_id,
+                    started_at=started_at,
+                    ended_at=ended_at,
+                    status="success",
+                    steps=steps,
+                    artifacts=artifacts,
+                )
                 return 0
-            logger.info(f"Ingested {len(notes)} notes")
 
-            summary = self._build_summary(notes)
-            
-            # Pull sales pipeline data
-            pipeline_data = self.pull_sales_pipeline_data()
-            
-            issues = self._handle_issues(summary)
-            output_file = self.save_output(notes, summary, issues, pipeline_data)
+            # ── TRANSFORM ──────────────────────────────────────────
+            ok, summary = run_step(
+                run_id=run_id,
+                stage="transform",
+                step="generate-summary",
+                fn=lambda: self._build_summary(notes),
+                allow_failure=True,
+            )
+            steps.append({"stage": "transform", "step": "generate-summary", "status": "success" if ok else "failure"})
 
-            duration = (datetime.now(timezone.utc) - start_time).total_seconds()
-            self._log_run_footer(duration, len(notes), len(issues), output_file)
+            if not ok:
+                overall_failed = True
+                summary = self._generate_demo_summary(notes)
+
+            # ── OPTIONAL DATA ENRICHMENT ───────────────────────────
+            ok_enrich, pipeline_data = run_step(
+                run_id=run_id,
+                stage="enrich",
+                step="sales-pipeline",
+                fn=self.pull_sales_pipeline_data,
+                allow_failure=True,
+            )
+            steps.append({"stage": "enrich", "step": "sales-pipeline", "status": "success" if ok_enrich else "failure"})
+
+            # ── OUTPUT / SIDE EFFECTS ──────────────────────────────
+            ok_issues, issues = run_step(
+                run_id=run_id,
+                stage="output",
+                step="github-issues",
+                fn=lambda: self._handle_issues(summary),
+                allow_failure=True,
+            )
+            steps.append({"stage": "output", "step": "github-issues", "status": "success" if ok_issues else "failure"})
+
+            if not ok_issues:
+                overall_failed = True
+                issues = []
+
+            try:
+                ok_save, output_file = run_step(
+                    run_id=run_id,
+                    stage="output",
+                    step="save-output",
+                    fn=lambda: self.save_output(
+                        notes,
+                        summary,
+                        issues,
+                        pipeline_data,
+                    ),
+                    allow_failure=False,  # must always persist outputs
+                )
+                steps.append({"stage": "output", "step": "save-output", "status": "success" if ok_save else "failure"})
+                # record artifact
+                try:
+                    artifacts["daily_summary"] = str(output_file)
+                except Exception:
+                    logger.debug("Could not record artifact path", exc_info=True)
+            except Exception as e:
+                steps.append({"stage": "output", "step": "save-output", "status": "failure", "error": str(e)})
+                ended_at = datetime.now(timezone.utc)
+                try:
+                    self._write_run_summary(
+                        run_id=run_id,
+                        started_at=started_at,
+                        ended_at=ended_at,
+                        status="failed",
+                        steps=steps,
+                        artifacts=artifacts,
+                    )
+                except Exception:
+                    logger.debug("Failed to persist run summary after save-output failure", exc_info=True)
+                raise
+
+            # ── FINALIZATION ───────────────────────────────────────
+            ended_at = datetime.now(timezone.utc)
+            duration = (ended_at - started_at).total_seconds()
+
+            logger.info(
+                "RUN_COMPLETE",
+                extra={
+                    "run_id": run_id,
+                    "status": "partial" if overall_failed else "success",
+                    "duration_sec": round(duration, 2),
+                    "notes": len(notes),
+                    "issues": len(issues),
+                    "output": str(artifacts.get("daily_summary", "")),
+                },
+            )
+
+            # persist canonical run summary
+            try:
+                self._write_run_summary(
+                    run_id=run_id,
+                    started_at=started_at,
+                    ended_at=ended_at,
+                    status="partial" if overall_failed else "success",
+                    steps=steps,
+                    artifacts=artifacts,
+                )
+            except Exception:
+                logger.debug("Failed to persist run summary after completion", exc_info=True)
 
             if self.demo_mode:
                 self._log_demo_instructions()
 
-            self._log_final_banner()
             return 0
 
         except Exception as e:
-            logger.error(f"❌ Fatal error during automation run: {e}", exc_info=True)
+            # Ensure we persist a failed run summary if possible
+            try:
+                ended_at = datetime.now(timezone.utc)
+                self._write_run_summary(
+                    run_id=run_id,
+                    started_at=started_at,
+                    ended_at=ended_at,
+                    status="failed",
+                    steps=steps,
+                    artifacts=artifacts,
+                )
+            except Exception:
+                logger.debug("Failed to persist run summary in exception handler", exc_info=True)
+
+            logger.error(
+                "RUN_FATAL",
+                extra={"run_id": run_id, "error": str(e)},
+                exc_info=True,
+            )
             return 1
 
     def _log_run_header(self) -> None:

@@ -1,15 +1,13 @@
 // Runtime: Node.js (default)
 // Justification: Uses process/env/IO
-import { NextResponse, type NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import fs from "fs/promises";
 import path from "path";
 import type { DailySummaryResponse, DailySummaryData } from "@/app/api/types";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(
-  _request: NextRequest
-): Promise<NextResponse<DailySummaryResponse>> {
+export async function GET(): Promise<NextResponse<DailySummaryResponse>> {
   try {
     const publicPath = path.join(process.cwd(), "public", "data", "daily_summary.json");
     const outputPath = path.join(process.cwd(), "output", "daily_summary.json");

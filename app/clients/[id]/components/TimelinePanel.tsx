@@ -6,14 +6,13 @@ import { supabaseClient } from "@/lib/supabaseClient";
 export default function TimelinePanel({ clientId }: { clientId: string }) {
   const [items, setItems] = useState<any[]>([]);
 
-  // Initial fetch
-  async function loadItems() {
-    const res = await fetch(`/api/clients/${clientId}/timeline`);
-    const data = await res.json();
-    setItems(data.items || []);
-  }
-
   useEffect(() => {
+    async function loadItems() {
+      const res = await fetch(`/api/clients/${clientId}/timeline`);
+      const data = await res.json();
+      setItems(data.items || []);
+    }
+
     (async () => {
       await loadItems();
     })();
