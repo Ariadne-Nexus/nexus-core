@@ -49,7 +49,8 @@ class DailySummary:
         Returns:
             DailySummary instance
         """
-        timestamp = datetime.now(datetime.now().astimezone().tzinfo)
+        from datetime import timezone
+        timestamp = datetime.now(timezone.utc)
         
         return cls(
             date=timestamp.strftime("%Y-%m-%d"),
@@ -178,56 +179,46 @@ class AuditLog:
 
 
 @dataclass
-class SalesDeal:
-    """Sales deal in the pipeline."""
+class SalesPipelineData:
+    """Sales pipeline data structure."""
     
-    deal_id: str
-    company: str
-    contact: str
-    stage: str
-    value: float
-    probability: int
-    expected_close_date: str
-    last_activity: str
+    timestamp: str
+    source: str
+    total_pipeline_value: int
+    deals_count: int
+    deals: List[Dict[str, Any]]
+    metrics: Dict[str, Any]
+    top_opportunities: List[Dict[str, Any]]
     
-    @property
-    def weighted_value(self) -> float:
-        """Calculate weighted value based on probability."""
-        return self.value * (self.probability / 100.0)
-    
-    def to_dict(self) -> Dict[str, Any]:
-        """Convert to dictionary for JSON serialization."""
-        return {
-            "deal_id": self.deal_id,
-            "company": self.company,
-            "contact": self.contact,
-            "stage": self.stage,
-            "value": self.value,
-            "probability": self.probability,
-            "expected_close_date": self.expected_close_date,
-            "last_activity": self.last_activity,
-            "weighted_value": self.weighted_value,
-        }
-
-
-@dataclass
-class PipelineSummary:
-    """Summary statistics for the sales pipeline."""
-    
-    total_deals: int
-    total_value: float
-    weighted_value: float
-    avg_deal_size: float
-    deals_by_stage: Dict[str, int]
-    value_by_stage: Dict[str, float]
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "SalesPipelineData":
+        """
+        Create SalesPipelineData from a dictionary.
+        
+        Args:
+            data: Dictionary with pipeline data
+        
+        Returns:
+            SalesPipelineData instance
+        """
+        return cls(
+            timestamp=data.get("timestamp", ""),
+            source=data.get("source", "unknown"),
+            total_pipeline_value=data.get("total_pipeline_value", 0),
+            deals_count=data.get("deals_count", 0),
+            deals=data.get("deals", []),
+            metrics=data.get("metrics", {}),
+            top_opportunities=data.get("top_opportunities", [])
+        )
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for JSON serialization."""
         return {
-            "total_deals": self.total_deals,
-            "total_value": self.total_value,
-            "weighted_value": self.weighted_value,
-            "avg_deal_size": self.avg_deal_size,
-            "deals_by_stage": self.deals_by_stage,
-            "value_by_stage": self.value_by_stage,
+            "timestamp": self.timestamp,
+            "source": self.source,
+            "total_pipeline_value": self.total_pipeline_value,
+            "deals_count": self.deals_count,
+            "deals": self.deals,
+            "metrics": self.metrics,
+            "top_opportunities": self.top_opportunities,
         }
