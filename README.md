@@ -136,6 +136,12 @@ This repo includes a production-grade daily automation workflow, orchestrated vi
 - Secrets (set in repo / environment settings):
   - `OPENAI_API_KEY`
   - `GITHUB_TOKEN` (with `repo` + `workflow` scopes)
+  - `SUPABASE_URL` or `NEXT_PUBLIC_SUPABASE_URL` (optional; set for Supabase upserts)
+  - `SUPABASE_SERVICE_ROLE_KEY` (optional; required for server-side upserts)
+  - `SUPABASE_SALES_PIPELINE_TABLE` (optional; defaults to `sales_pipeline_snapshots`)
+  - Salesforce (optional -- only required if `SALES_PIPELINE_SOURCE=salesforce`):
+    - `SALESFORCE_ACCESS_TOKEN` and `SALESFORCE_INSTANCE_URL` (preferred), or
+    - `SALESFORCE_CLIENT_ID`, `SALESFORCE_CLIENT_SECRET`, `SALESFORCE_USERNAME`, `SALESFORCE_PASSWORD`, and optionally `SALESFORCE_SECURITY_TOKEN` (password grant fallback)
 - Optional inputs:
   - `demo_mode` (run in dry-run mode without hitting external APIs)
 
