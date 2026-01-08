@@ -470,3 +470,30 @@ chmod 755 output/sales_cache
 **Version:** 1.0.0  
 **Module:** Sales Pipeline Automation
 >>>>>>> main
+
+## Supabase table (recommended)
+
+If you want the automation to persist snapshots into Supabase (via the PostgREST API), create a simple table to hold the snapshot payload. The automation will call the PostgREST endpoint with `on_conflict=timestamp` to perform an upsert.
+
+Example SQL (recommended):
+
+```sql
+-- Create table for sales pipeline snapshots
+CREATE TABLE IF NOT EXISTS public.sales_pipeline_snapshots (
+  "timestamp" text NOT NULL PRIMARY KEY,
+  source text,
+  demo boolean DEFAULT FALSE,
+  payload jsonb NOT NULL,
+  inserted_at timestamptz DEFAULT now()
+);
+
+-- Index to speed time-based queries
+CREATE INDEX IF NOT EXISTS idx_sales_pipeline_snapshots_inserted_at
+  ON public.sales_pipeline_snapshots (inserted_at);
+```
+
+Notes:
+- Use the Supabase *service role* key for server-side upserts (store it as `SUPABASE_SERVICE_ROLE_KEY`). Do not expose the service role key to clients.  
+- The automation uses `SUPABASE_URL` (or `NEXT_PUBLIC_SUPABASE_URL`) + `SUPABASE_SERVICE_ROLE_KEY` and the table name `sales_pipeline_snapshots` (configurable via `SUPABASE_SALES_PIPELINE_TABLE`).  
+- If you prefer an auto-generated id, add a `uuid` column and populate it on insert.  
+- Consider adding RLS policies if you expose DB access to untrusted actors.
