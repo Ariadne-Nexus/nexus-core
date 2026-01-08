@@ -291,7 +291,15 @@ class DailyAutomation:
             raise RuntimeError("OpenAI client initialization failed") from e
 
         try:
-            self.github_client = Github(auth=Github.Auth.Token(self.config.github_token))
+            # PyGithub supports multiple authentication styles depending on version.
+            # Prefer the newer `Auth.Token` API when available, otherwise fall back
+            # to the legacy `Github(<token>)` constructor.
+            try:
+                from github import Auth  # type: ignore
+
+                self.github_client = Github(auth=Auth.Token(self.config.github_token))
+            except Exception:
+                self.github_client = Github(self.config.github_token)
             self.repo = self.github_client.get_repo(self.config.repo_name)
             logger.info(
                 "✓ API clients initialized successfully",
