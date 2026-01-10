@@ -18,7 +18,7 @@ function makeHandler(runFile) {
       const data = JSON.parse(raw);
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ ok: true, automation: data }));
-    } catch (err) {
+    } catch {
       // Keep server-side errors quiet in tests; callers validate via status/body.
       res.writeHead(500, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ ok: false, error: 'Failed to read automation status' }));

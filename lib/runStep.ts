@@ -1,5 +1,3 @@
-import { randomUUID } from "crypto";
-
 export type StepStatus = "start" | "success" | "failure";
 
 export interface StepLog {
@@ -44,9 +42,6 @@ export async function runStep<T>(
   } = options;
 
   const timestamp = () => new Date().toISOString();
-
-  // Use a local id to help debugging when necessary
-  const _localRunMarker = randomUUID();
 
   // STEP START
   log({
