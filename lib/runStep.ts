@@ -45,9 +45,6 @@ export async function runStep<T>(
 
   const timestamp = () => new Date().toISOString();
 
-  // Use a local id to help debugging when necessary
-  const _localRunMarker = randomUUID();
-
   // STEP START
   log({
     timestamp: timestamp(),
