@@ -1,24 +1,24 @@
 {
   "date": "2026-01-15",
-  "created_at": "2026-01-15T13:38:59.699754+00:00",
-  "repo": "dotlink-ops/nexus-core",
+  "created_at": "2026-01-15T20:09:13.199963+00:00",
+  "repo": "unknown/repo",
   "summary_bullets": [
-    "```json\n{\n  \"highlights\": [\n    \"Fixed authentication bug and TypeScript strict mode issues, enhancing system robustness.\",\n    \"Deployed hotfix to production and added significant new features like -"
+    "Processed 2 notes from daily workflow",
+    "Identified automation opportunities in sales pipeline",
+    "Found bug in report export requiring immediate fix"
   ],
   "action_items": [
-    "Review generated summary"
+    "Implement automated data pull for sales pipeline",
+    "Fix daily report export script failing on edge cases",
+    "Draft investor-ready bulleted summary for next meeting"
   ],
-  "assessment": "AI generated summary (non-JSON response)",
+  "assessment": "Key outcomes: 3 actionable items identified. Sales pipeline automation is high-priority.",
   "issues_created": 0,
   "issues": [],
-chore/Ariadne-Nexus/copilot/fix-daily-report-export-script-yet-again
   "raw_text": "Summary:\nKey outcomes: 3 actionable items identified. Sales pipeline automation is high-priority.\nActions:\n- Implement automated data pull for sales pipeline\n- Fix daily report export script failing on edge cases\n- Draft investor-ready bulleted summary for next meeting",
-=======
-  "raw_text": "Summary:\nAI generated summary (non-JSON response)\nActions:\n- Review generated summary",
-main
   "metadata": {
     "runner_version": "2.0.0",
-    "demo_mode": false,
+    "demo_mode": true,
     "notes_count": 2,
     "sales_pipeline_enabled": true
   },
@@ -26,6 +26,6 @@ main
     "total_leads": 5,
     "total_value": 462000.0,
     "weighted_value": 254500.0,
-    "timestamp": "2026-01-15T13:38:59.584589+00:00"
+    "timestamp": "2026-01-15T20:09:13.198877+00:00"
   }
 }
