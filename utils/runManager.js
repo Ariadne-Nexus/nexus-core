@@ -44,7 +44,7 @@ export class RunManager {
     if (!this.stream) return; // not initialized
     try {
       this.stream.write(JSON.stringify(obj) + '\n');
-    } catch (e) {
+    } catch {
       // swallow to avoid breaking runner
     }
 
@@ -80,7 +80,7 @@ export class RunManager {
         this.stream = null;
       }
       await writeFile(this.summaryPath, JSON.stringify(this.summary, null, 2));
-    } catch (e) {
+    } catch {
       // ignore
     }
   }

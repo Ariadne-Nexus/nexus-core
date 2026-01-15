@@ -59,7 +59,7 @@ function emitStructured({ eventType, runId, stepName, message, metadata, error, 
   try {
     const mgr = globalThis.__run_manager;
     if (mgr && typeof mgr.appendLog === 'function') mgr.appendLog(out);
-  } catch (e) {
+  } catch {
     // do not crash logging
   }
 }

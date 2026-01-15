@@ -133,7 +133,7 @@ async function fetchWorkflowStatus(): Promise<{
       conclusion: latestRun.conclusion,
       updatedAt: latestRun.updated_at,
     };
-  } catch (error) {
+  } catch {
     return {
       lastRunTime: "5:00 AM PT (scheduled)",
       lastRunStatus: "unknown",
