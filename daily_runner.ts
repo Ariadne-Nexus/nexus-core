@@ -153,7 +153,11 @@ export async function main() {
       await runMgr.finalize(overallStatus);
     } catch (e) {
       // If finalization fails, emit a last-ditch log but do not throw
+chore/Ariadne-Nexus/copilot/fix-daily-report-export-script-yet-again
+      try { ac.runFailed(runId, `Finalization write failed: ${String(e)}`, { error: (e as Error)?.stack || null }); } catch {}
+=======
       try { ac.runFailed(runId, `Finalization write failed: ${String(e)}`, { error: (e as Error)?.stack || null }); } catch { }
+main
     }
     // Use exit code set above
     process.exit(process.exitCode || 0);

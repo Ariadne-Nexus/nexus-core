@@ -1,5 +1,8 @@
+chore/Ariadne-Nexus/copilot/fix-daily-report-export-script-yet-again
+=======
 // no external imports needed
 
+main
 export type StepStatus = "start" | "success" | "failure";
 
 export interface StepLog {

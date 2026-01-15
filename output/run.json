@@ -1,10 +1,10 @@
 {
-  "run_id": "20251215T093012",
-  "started_at": "2025-12-15T09:30:12Z",
-  "ended_at": "2025-12-15T09:30:44Z",
-  "duration_sec": 32.1,
-  "status": "partial",
-  "demo_mode": false,
+  "run_id": "20260108T011922",
+  "started_at": "2026-01-08T01:19:22.877427+00:00",
+  "ended_at": "2026-01-08T01:19:22.880536+00:00",
+  "duration_sec": 0.0,
+  "status": "success",
+  "demo_mode": true,
   "steps": [
     {
       "stage": "ingest",
@@ -14,7 +14,22 @@
     {
       "stage": "transform",
       "step": "generate-summary",
-      "status": "failure"
+      "status": "success"
+    },
+    {
+      "stage": "enrich",
+      "step": "sales-pipeline",
+      "status": "success"
+    },
+    {
+      "stage": "output",
+      "step": "github-issues",
+      "status": "success"
+    },
+    {
+      "stage": "output",
+      "step": "save-output",
+      "status": "success"
     }
   ],
   "artifacts": {

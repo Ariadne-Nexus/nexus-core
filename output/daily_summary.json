@@ -11,7 +11,11 @@
   "assessment": "AI generated summary (non-JSON response)",
   "issues_created": 0,
   "issues": [],
+chore/Ariadne-Nexus/copilot/fix-daily-report-export-script-yet-again
+  "raw_text": "Summary:\nKey outcomes: 3 actionable items identified. Sales pipeline automation is high-priority.\nActions:\n- Implement automated data pull for sales pipeline\n- Fix daily report export script failing on edge cases\n- Draft investor-ready bulleted summary for next meeting",
+=======
   "raw_text": "Summary:\nAI generated summary (non-JSON response)\nActions:\n- Review generated summary",
+main
   "metadata": {
     "runner_version": "2.0.0",
     "demo_mode": false,
